@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ServiceService {
-  private apiUrl = 'http://127.0.0.1:8000/api/servicos/'; // 🔁 ajuste para seu backend real
+  private apiUrl = 'https://api.laisbarretoribeiro.com/api/servicos/'; // 🔁 ajuste para seu backend real
 
   constructor(private http: HttpClient) {}
 
