@@ -1,0 +1,39 @@
+<h1 class="titulo">Serviços</h1>
+
+<div class="form-servico">
+  <mat-form-field appearance="fill">
+    <mat-label>Nome do Serviço</mat-label>
+    <input matInput [(ngModel)]="nome" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Preço</mat-label>
+    <input matInput type="number" [(ngModel)]="preco" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Duração - Ex: 01:30:00</mat-label>
+    <input matInput [(ngModel)]="duracao_cliente" />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="salvarServico()">
+    {{ editandoId !== null ? 'Atualizar Serviço' : 'Adicionar Serviço' }}
+  </button>
+</div>
+
+<div class="cards">
+  <mat-card class="card" *ngFor="let serv of services; let i = index">
+    <h2>{{ serv.name }}</h2>
+    <p><strong>Preço:</strong> R$ {{ serv.price }}</p>
+    <p><strong>Duração Cliente:</strong> {{ serv.duracion_client }}</p>
+
+    <div class="acoes">
+      <button mat-icon-button color="primary" (click)="editarServico(serv)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="excluirServico(serv.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>
