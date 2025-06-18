@@ -52,6 +52,9 @@
   }
 
   .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     background: white;
     color: #ff5f8f;
     font-weight: bold;
