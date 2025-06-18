@@ -7,6 +7,9 @@ import { MatInputModule } from '@angular/material/input'; // obrigatório para <
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ServiceService } from '../../services/service.service';
+import { MatSelectModule } from '@angular/material/select';
+
 
 @Component({
   selector: 'app-agendamentos',
@@ -21,9 +24,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatCard,
     MatIcon,
     MatDatepickerModule,
+    MatSelectModule,
   ]
 })
 export class AgendamentosComponent implements OnInit {
+  mensagemErro: string = '';
   carregando = false;
   modoForm = false;
   mensagemSucesso = '';
@@ -45,10 +50,23 @@ export class AgendamentosComponent implements OnInit {
     hora: ''
   };
 
-  constructor(private agendamentoService: AgendamentoService) { }
+  constructor(
+    private agendamentoService: AgendamentoService,
+    private serivceApi: ServiceService
+  ) { }
+
+  procedimentos: string[] = []
+
+  carregarServicos() {
+    this.serivceApi.getAll().subscribe(data => {
+      this.procedimentos = data.map((s: { name: string }) => s.name);
+    });
+  }
+
 
   ngOnInit(): void {
     this.carregarAgendamentos();
+    this.carregarServicos();
   }
 
   carregarAgendamentos(): void {
@@ -108,47 +126,49 @@ export class AgendamentosComponent implements OnInit {
 
 
   salvar(): void {
-  this.carregando = true;
+    this.carregando = true;
 
-  const payload: Agendamento = {
-    client_name: this.novoAgendamento.nome,
-    client_email: this.novoAgendamento.email,
-    client_phone: this.novoAgendamento.phone,
-    service_type: this.novoAgendamento.procedimento,
-    appointment_date: this.formatarData(this.novoAgendamento.data),
-    appointment_time: this.novoAgendamento.hora
-  };
+    const payload: Agendamento = {
+      client_name: this.novoAgendamento.nome,
+      client_email: this.novoAgendamento.email,
+      client_phone: this.novoAgendamento.phone,
+      service_type: this.novoAgendamento.procedimento,
+      appointment_date: this.formatarData(this.novoAgendamento.data),
+      appointment_time: this.novoAgendamento.hora
+    };
 
-  const callback = () => {
-    this.carregando = false;
-    this.resetarForm();
-  };
+    const callback = () => {
+      this.carregando = false;
+      this.resetarForm();
+    };
 
-  if (this.editando !== null) {
-    const id = this.agendamentos[this.editando].id;
-    this.agendamentoService.atualizar(id, payload).subscribe({
-      next: () => {
-        this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
-        callback();
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar agendamento', err);
-        this.carregando = false;
-      }
-    });
-  } else {
-    this.agendamentoService.criar(payload).subscribe({
-      next: () => {
-        this.mensagemSucesso = 'Agendamento salvo com sucesso!';
-        callback();
-      },
-      error: (err) => {
-        console.error('Erro ao criar agendamento', err);
-        this.carregando = false;
-      }
-    });
+    if (this.editando !== null) {
+      const id = this.agendamentos[this.editando].id;
+      this.agendamentoService.atualizar(id, payload).subscribe({
+        next: () => {
+          this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
+          callback();
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar agendamento', err);
+          this.carregando = false;
+        }
+      });
+    } else {
+      this.agendamentoService.criar(payload).subscribe({
+        next: () => {
+          this.mensagemSucesso = 'Agendamento salvo com sucesso!';
+          callback();
+        },
+        error: (err: any) => {
+          console.error('Erro ao salvar agendamento', err);
+          this.mensagemErro = err.error?.detail || 'Erro ao salvar agendamento';
+          this.carregando = false;
+          console.log('Erro aqui olha chat', this.mensagemErro);
+        }
+      });
+    }
   }
-}
 
 
   editar(i: number) {
@@ -197,6 +217,10 @@ export class AgendamentosComponent implements OnInit {
     this.filtroCliente = '';
     this.filtroServico = '';
     this.filtrarPorData();
+  }
+
+  fecharErro() {
+    this.mensagemErro = '';
   }
 
   private formatarData(data: any): string {

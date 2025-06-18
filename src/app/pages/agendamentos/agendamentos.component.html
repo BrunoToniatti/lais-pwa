@@ -3,7 +3,8 @@
 <div class="filtros" *ngIf="!modoForm">
   <mat-form-field appearance="fill" class="filtro-data">
     <mat-label>Filtrar por data</mat-label>
-    <input matInput [matDatepicker]="filtroPicker" [(ngModel)]="dataFiltro" (dateChange)="filtrarPorData()" placeholder="Escolha a data" />
+    <input matInput [matDatepicker]="filtroPicker" [(ngModel)]="dataFiltro" (dateChange)="filtrarPorData()"
+      placeholder="Escolha a data" />
     <mat-datepicker-toggle matSuffix [for]="filtroPicker"></mat-datepicker-toggle>
     <mat-datepicker #filtroPicker></mat-datepicker>
   </mat-form-field>
@@ -32,8 +33,18 @@
 <br>
 <br>
 
+<!-- Modal de erro -->
+<div class="modal-erro" *ngIf="mensagemErro">
+  <div class="modal-erro-conteudo animate">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <span>{{ mensagemErro }}</span>
+    <button class="btn-fechar-erro" (click)="fecharErro()">Fechar</button>
+  </div>
+</div>
+
 <!-- FORMULÁRIO -->
 <div *ngIf="modoForm" class="formulario">
+
   <mat-form-field appearance="fill">
     <mat-label>Nome do Cliente</mat-label>
     <input matInput [(ngModel)]="novoAgendamento.nome" />
@@ -49,9 +60,13 @@
     <input matInput [(ngModel)]="novoAgendamento.phone" />
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field>
     <mat-label>Procedimento</mat-label>
-    <input matInput [(ngModel)]="novoAgendamento.procedimento" />
+    <mat-select [(ngModel)]="novoAgendamento.procedimento">
+      <mat-option *ngFor="let procedimento of procedimentos" [value]="procedimento">
+        {{ procedimento }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
