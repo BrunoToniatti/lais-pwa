@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -21,19 +21,26 @@ export class AgendamentoService {
 
   constructor(private http: HttpClient) { }
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = '3c07f0049dac3c17c16cc4fae40cf5b1d431522c'; // 🔁 Substitua aqui pelo token da Lais
+    return new HttpHeaders({
+      Authorization: `Token ${token}`
+    });
+  }
+
   listar(): Observable<Agendamento[]> {
-    return this.http.get<Agendamento[]>(this.apiUrl);
+    return this.http.get<Agendamento[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
   criar(agendamento: Agendamento): Observable<Agendamento> {
-    return this.http.post<Agendamento>(this.apiUrl, agendamento);
+    return this.http.post<Agendamento>(this.apiUrl, agendamento, { headers: this.getAuthHeaders() });
   }
 
   atualizar(id: number, agendamento: Agendamento): Observable<Agendamento> {
-    return this.http.put<Agendamento>(`${this.apiUrl}${id}/`, agendamento);
+    return this.http.put<Agendamento>(`${this.apiUrl}${id}/`, agendamento, { headers: this.getAuthHeaders() });
   }
 
   excluir(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}${id}/`);
+    return this.http.delete(`${this.apiUrl}${id}/`, { headers: this.getAuthHeaders() });
   }
 }
