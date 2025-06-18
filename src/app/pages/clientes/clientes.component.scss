@@ -1,0 +1,104 @@
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.titulo {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ff5f8f;
+  margin-bottom: 28px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 16px #ffb6ea88, 0 1px 0 #fff;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  animation: fadeUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.search {
+  width: 100%;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-bottom: 32px;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 28px 20px 22px 20px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(255, 95, 143, 0.13), 0 1.5px 8px 0 rgba(255, 182, 234, 0.10);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1.5px solid rgba(255,182,234,0.18);
+  color: #6d1b7b;
+  transition: transform 0.22s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.22s, background 0.22s;
+  animation: fadeUp 1s cubic-bezier(.68,-0.55,.27,1.55);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-6px) scale(1.04) rotate(-1deg);
+    box-shadow: 0 16px 40px 0 #ff5f8faa, 0 2px 12px 0 #ffb6ea99;
+    background: rgba(255,255,255,0.95);
+  }
+
+  .icon {
+    font-size: 44px;
+    color: #ff5f8f;
+    filter: drop-shadow(0 2px 12px #ffb6ea88);
+    margin-top: 2px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #ffb6ea 0%, #ff5f8f 100%);
+    border-radius: 50%;
+    padding: 8px;
+    box-shadow: 0 2px 8px #ffb6ea44;
+  }
+
+  .info {
+    h2 {
+      margin: 0 0 6px 0;
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: #c2185b;
+      letter-spacing: 0.5px;
+    }
+    p {
+      margin: 0;
+      font-size: 1rem;
+      color: #6d1b7b;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .card {
+    padding: 16px 8px 12px 8px;
+    border-radius: 12px;
+  }
+  .titulo {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  .search {
+    max-width: 98vw;
+    margin-bottom: 18px;
+    border-radius: 8px;
+  }
+}

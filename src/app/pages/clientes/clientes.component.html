@@ -1,1 +1,17 @@
-<p>clientes works!</p>
+<h1 class="titulo">Clientes</h1>
+
+<mat-form-field appearance="fill" class="search">
+  <mat-label>Buscar cliente</mat-label>
+  <input matInput [(ngModel)]="busca" placeholder="Digite o nome..." />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
+
+<div class="cards">
+  <mat-card class="card animate" *ngFor="let cliente of clientesFiltrados">
+    <mat-icon class="icon">person</mat-icon>
+    <div class="info">
+      <h2>{{ cliente.nome }}</h2>
+      <p>{{ cliente.telefone }}</p>
+    </div>
+  </mat-card>
+</div>
