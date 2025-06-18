@@ -49,6 +49,18 @@
         margin-right: 8px;
       }
     }
+
+    a.router-link-active, a.selected {
+      background: linear-gradient(90deg, #ffb6ea 0%, #ff5f8f 100%);
+      color: #fff !important;
+      box-shadow: 0 2px 12px #ffb6ea44;
+      font-weight: 700;
+      border-radius: 8px 20px 20px 8px;
+
+      mat-icon {
+        color: #fff;
+      }
+    }
   }
 
   .toolbar {
