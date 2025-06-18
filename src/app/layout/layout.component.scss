@@ -1,12 +1,76 @@
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .sidenav-container {
   height: 100vh;
+
+  .sidenav {
+    width: 230px;
+    background: linear-gradient(120deg, #ff5f8f, #ffb6ea);
+    color: white;
+
+    .sidenav-header {
+      padding: 20px;
+      text-align: center;
+
+      h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: bold;
+        text-shadow: 0 2px 4px #00000033;
+      }
+
+      p {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.9;
+      }
+    }
+
+    a {
+      color: white !important;
+      font-weight: 500;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .toolbar {
+    background: white;
+    color: #ff5f8f;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(255, 95, 143, 0.15);
+
+    button {
+      color: #ff5f8f;
+    }
+  }
+
+  .content {
+    padding: 24px;
+    animation: fadeInSlide 0.6s ease-out;
+    min-height: calc(100vh - 64px); // se toolbar tiver 64px
+    background: #fff0f5;
+  }
 }
 
-mat-toolbar {
-  font-weight: bold;
-  color: white;
-}
-
-.content {
-  padding: 20px;
+.animate-fadein {
+  animation: fadeInSlide 0.6s ease-out;
 }
