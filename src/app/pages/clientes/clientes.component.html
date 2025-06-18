@@ -1,17 +1,56 @@
 <h1 class="titulo">Clientes</h1>
 
+<div *ngIf="mensagem" class="mensagem-feedback animate">
+  <mat-icon>check_circle</mat-icon> {{ mensagem }}
+</div>
+
 <mat-form-field appearance="fill" class="search">
   <mat-label>Buscar cliente</mat-label>
   <input matInput [(ngModel)]="busca" placeholder="Digite o nome..." />
   <mat-icon matSuffix>search</mat-icon>
 </mat-form-field>
 
+<!-- Formulário de adicionar/editar cliente -->
+<form (ngSubmit)="salvarCliente()" class="formulario-cliente">
+  <mat-form-field appearance="fill">
+    <mat-label>Nome</mat-label>
+    <input matInput [(ngModel)]="nome" name="nome" required />
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Telefone</mat-label>
+    <input matInput [(ngModel)]="telefone" name="telefone" required />
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit">
+    {{ editando !== null ? 'Salvar Alteração' : 'Adicionar Cliente' }}
+  </button>
+</form>
+
 <div class="cards">
-  <mat-card class="card animate" *ngFor="let cliente of clientesFiltrados">
+  <mat-card class="card animate" *ngFor="let cliente of clientesFiltrados; let i = index">
     <mat-icon class="icon">person</mat-icon>
     <div class="info">
       <h2>{{ cliente.nome }}</h2>
       <p>{{ cliente.telefone }}</p>
     </div>
+    <div class="acoes">
+      <button mat-icon-button color="primary" (click)="editar(i)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusao(i)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
   </mat-card>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal-excluir" *ngIf="confirmandoExclusao !== null">
+  <div class="modal-conteudo animate">
+    <mat-icon color="warn">warning</mat-icon>
+    <span>Deseja remover este cliente?</span>
+    <div class="botoes">
+      <button mat-raised-button color="warn" (click)="confirmarExclusao()">Remover</button>
+      <button mat-stroked-button color="primary" (click)="cancelarExclusao()">Cancelar</button>
+    </div>
+  </div>
 </div>
