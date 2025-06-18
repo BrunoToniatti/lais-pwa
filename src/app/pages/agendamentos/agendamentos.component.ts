@@ -29,6 +29,8 @@ import { MatCardModule } from '@angular/material/card'; // 👈 IMPORTA AQUI
 export class AgendamentosComponent {
   modoForm: boolean = false;
   mensagemSucesso: string = '';
+  editando: number | null = null;
+  confirmandoExclusao: number | null = null;
 
   agendamentos = [
     { hora: '09:00', cliente: 'Camila Souza', servico: 'Volume Russo' },
@@ -44,16 +46,57 @@ export class AgendamentosComponent {
   };
 
   salvar() {
-    this.agendamentos.push({
-      hora: this.novoAgendamento.hora,
-      cliente: this.novoAgendamento.nome,
-      servico: this.novoAgendamento.procedimento
-    });
-    this.mensagemSucesso = 'Agendamento salvo com sucesso!';
+    if (this.editando !== null) {
+      this.agendamentos[this.editando] = {
+        hora: this.novoAgendamento.hora,
+        cliente: this.novoAgendamento.nome,
+        servico: this.novoAgendamento.procedimento
+      };
+      this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
+      this.editando = null;
+    } else {
+      this.agendamentos.push({
+        hora: this.novoAgendamento.hora,
+        cliente: this.novoAgendamento.nome,
+        servico: this.novoAgendamento.procedimento
+      });
+      this.mensagemSucesso = 'Agendamento salvo com sucesso!';
+    }
     setTimeout(() => {
       this.mensagemSucesso = '';
     }, 3000);
     this.novoAgendamento = { nome: '', procedimento: '', data: '', hora: '' };
     this.modoForm = false;
+  }
+
+  editar(i: number) {
+    const ag = this.agendamentos[i];
+    this.novoAgendamento = {
+      nome: ag.cliente,
+      procedimento: ag.servico,
+      data: '',
+      hora: ag.hora
+    };
+    this.editando = i;
+    this.modoForm = true;
+  }
+
+  pedirConfirmacaoExclusao(i: number) {
+    this.confirmandoExclusao = i;
+  }
+
+  confirmarExclusao() {
+    if (this.confirmandoExclusao !== null) {
+      this.agendamentos.splice(this.confirmandoExclusao, 1);
+      this.mensagemSucesso = 'Agendamento removido com sucesso!';
+      setTimeout(() => {
+        this.mensagemSucesso = '';
+      }, 3000);
+      this.confirmandoExclusao = null;
+    }
+  }
+
+  cancelarExclusao() {
+    this.confirmandoExclusao = null;
   }
 }
