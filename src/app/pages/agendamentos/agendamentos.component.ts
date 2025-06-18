@@ -1,102 +1,193 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { AgendamentoService, Agendamento } from '../../services/agendamento.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input'; // obrigatório para <input matInput>
+import { MatCard } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatCardModule } from '@angular/material/card'; // 👈 IMPORTA AQUI
 
 @Component({
   selector: 'app-agendamentos',
+  templateUrl: './agendamentos.component.html',
+  styleUrls: ['./agendamentos.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
+    CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatIconModule,
+    MatCard,
+    MatIcon,
     MatDatepickerModule,
-    MatNativeDateModule,
-    MatCardModule // 👈 ADICIONA AQUI TAMBÉM
-  ],
-  templateUrl: './agendamentos.component.html',
-  styleUrls: ['./agendamentos.component.scss']
+  ]
 })
-export class AgendamentosComponent {
-  modoForm: boolean = false;
-  mensagemSucesso: string = '';
+export class AgendamentosComponent implements OnInit {
+  modoForm = false;
+  mensagemSucesso = '';
   editando: number | null = null;
   confirmandoExclusao: number | null = null;
+  dataFiltro: Date | null = null;
+  filtroCliente: string = '';
+  filtroServico: string = '';
+  agendamentosFiltrados: any[] = [];
 
-  agendamentos = [
-    { hora: '09:00', cliente: 'Camila Souza', servico: 'Volume Russo' },
-    { hora: '10:30', cliente: 'Bruna Lima', servico: 'Design de Sobrancelha' },
-    { hora: '13:00', cliente: 'Jéssica Alves', servico: 'Manutenção Cílios' }
-  ];
+  agendamentos: any[] = [];
 
   novoAgendamento = {
     nome: '',
+    email: '',
+    phone: '',
     procedimento: '',
     data: '',
     hora: ''
   };
 
-  salvar() {
-    if (this.editando !== null) {
-      this.agendamentos[this.editando] = {
-        hora: this.novoAgendamento.hora,
-        cliente: this.novoAgendamento.nome,
-        servico: this.novoAgendamento.procedimento
-      };
-      this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
-      this.editando = null;
-    } else {
-      this.agendamentos.push({
-        hora: this.novoAgendamento.hora,
-        cliente: this.novoAgendamento.nome,
-        servico: this.novoAgendamento.procedimento
-      });
-      this.mensagemSucesso = 'Agendamento salvo com sucesso!';
-    }
-    setTimeout(() => {
-      this.mensagemSucesso = '';
-    }, 3000);
-    this.novoAgendamento = { nome: '', procedimento: '', data: '', hora: '' };
-    this.modoForm = false;
+  constructor(private agendamentoService: AgendamentoService) { }
+
+  ngOnInit(): void {
+    this.carregarAgendamentos();
   }
 
+  carregarAgendamentos(): void {
+    this.agendamentoService.listar().subscribe({
+      next: (res) => {
+        this.agendamentos = res.map(a => ({
+          id: a['id'],
+          cliente: a.client_name,
+          email: a.client_email,
+          telefone: a.client_phone,
+          servico: a.service_type,
+          data: a.appointment_date,
+          hora: a.appointment_time
+        }));
+        this.filtrarPorData();
+      },
+      error: (err: any) => console.error('Erro ao buscar agendamentos', err)
+
+    });
+  }
+
+  filtrarPorData() {
+    this.agendamentosFiltrados = this.agendamentos.filter(ag => {
+      // Filtro por data
+      let dataOk = true;
+      if (this.dataFiltro) {
+        const dataStr = this.dataFiltro.toISOString().slice(0, 10);
+        const agDataStr = (ag.data instanceof Date ? ag.data : new Date(ag.data)).toISOString().slice(0, 10);
+        dataOk = agDataStr === dataStr;
+      }
+      // Filtro por cliente
+      let clienteOk = true;
+      if (this.filtroCliente) {
+        clienteOk = ag.cliente.toLowerCase().includes(this.filtroCliente.toLowerCase());
+      }
+      // Filtro por serviço
+      let servicoOk = true;
+      if (this.filtroServico) {
+        servicoOk = ag.servico.toLowerCase().includes(this.filtroServico.toLowerCase());
+      }
+      return dataOk && clienteOk && servicoOk;
+    });
+  }
+
+  formatDate(date: string): string {
+    let dateSplit = date.split('-');
+    return `${dateSplit[2]}/${dateSplit[1]}/${dateSplit[0]}`;
+  }
+
+  resetarForm(): void {
+    this.modoForm = false;
+    this.editando = null;
+    this.novoAgendamento = { nome: '', email: '', phone: '', procedimento: '', data: '', hora: '' };
+    this.carregarAgendamentos();
+    setTimeout(() => this.mensagemSucesso = '', 3000);
+  }
+
+
+  salvar(): void {
+    const payload: Agendamento = {
+      client_name: this.novoAgendamento.nome,
+      client_email: this.novoAgendamento.email,
+      client_phone: this.novoAgendamento.phone,
+      service_type: this.novoAgendamento.procedimento,
+      appointment_date: this.formatarData(this.novoAgendamento.data),
+      appointment_time: this.novoAgendamento.hora
+    };
+
+    if (this.editando !== null) {
+      const id = this.agendamentos[this.editando].id;
+      this.agendamentoService.atualizar(id, payload).subscribe({
+        next: () => {
+          this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
+          this.resetarForm();
+        },
+        error: (err) => console.error('Erro ao atualizar agendamento', err)
+      });
+    } else {
+      this.agendamentoService.criar(payload).subscribe({
+        next: () => {
+          this.mensagemSucesso = 'Agendamento salvo com sucesso!';
+          this.resetarForm();
+        },
+        error: (err) => console.error('Erro ao criar agendamento', err)
+      });
+    }
+  }
+
+
   editar(i: number) {
-    const ag = this.agendamentos[i];
+    const ag = this.agendamentosFiltrados[i];
     this.novoAgendamento = {
       nome: ag.cliente,
+      email: ag.email,
+      phone: ag.telefone,
       procedimento: ag.servico,
-      data: '',
+      data: ag.data,
       hora: ag.hora
     };
-    this.editando = i;
+    // Encontrar o índice real no array principal
+    this.editando = this.agendamentos.findIndex(a => a === ag);
     this.modoForm = true;
   }
 
   pedirConfirmacaoExclusao(i: number) {
-    this.confirmandoExclusao = i;
+    // Encontrar o índice real no array principal
+    const ag = this.agendamentosFiltrados[i];
+    this.confirmandoExclusao = this.agendamentos.findIndex(a => a === ag);
   }
 
   confirmarExclusao() {
     if (this.confirmandoExclusao !== null) {
-      this.agendamentos.splice(this.confirmandoExclusao, 1);
-      this.mensagemSucesso = 'Agendamento removido com sucesso!';
-      setTimeout(() => {
-        this.mensagemSucesso = '';
-      }, 3000);
-      this.confirmandoExclusao = null;
+      const id = this.agendamentos[this.confirmandoExclusao].id;
+      this.agendamentoService.excluir(id).subscribe({
+        next: () => {
+          this.mensagemSucesso = 'Agendamento removido com sucesso!';
+          this.confirmandoExclusao = null;
+          this.carregarAgendamentos();
+          setTimeout(() => this.mensagemSucesso = '', 3000);
+        },
+        error: (err) => console.error('Erro ao excluir agendamento', err)
+      });
     }
   }
 
+
   cancelarExclusao() {
     this.confirmandoExclusao = null;
+  }
+
+  limparFiltros() {
+    this.dataFiltro = null;
+    this.filtroCliente = '';
+    this.filtroServico = '';
+    this.filtrarPorData();
+  }
+
+  private formatarData(data: any): string {
+    if (typeof data === 'string') return data;
+    const d = new Date(data);
+    return d.toISOString().split('T')[0];
   }
 }

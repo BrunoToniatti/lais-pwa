@@ -1,10 +1,32 @@
 <h1 class="titulo">Agendamentos</h1>
 
+<div class="filtros" *ngIf="!modoForm">
+  <mat-form-field appearance="fill" class="filtro-data">
+    <mat-label>Filtrar por data</mat-label>
+    <input matInput [matDatepicker]="filtroPicker" [(ngModel)]="dataFiltro" (dateChange)="filtrarPorData()" placeholder="Escolha a data" />
+    <mat-datepicker-toggle matSuffix [for]="filtroPicker"></mat-datepicker-toggle>
+    <mat-datepicker #filtroPicker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="filtro-nome">
+    <mat-label>Filtrar por cliente</mat-label>
+    <input matInput [(ngModel)]="filtroCliente" (ngModelChange)="filtrarPorData()" placeholder="Nome do cliente" />
+    <mat-icon matSuffix>person_search</mat-icon>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="filtro-servico">
+    <mat-label>Filtrar por serviço</mat-label>
+    <input matInput [(ngModel)]="filtroServico" (ngModelChange)="filtrarPorData()" placeholder="Tipo de serviço" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <button mat-stroked-button color="primary" class="btn-limpar" (click)="limparFiltros()">
+    <mat-icon>close</mat-icon> Limpar Filtros
+  </button>
+</div>
+
 <div *ngIf="mensagemSucesso" class="mensagem-sucesso animate">
   <mat-icon>check_circle</mat-icon> {{ mensagemSucesso }}
 </div>
 
-<button mat-raised-button color="primary" (click)="modoForm = !modoForm">
+<button class="btn-novo-agendamento" (click)="modoForm = !modoForm">
   {{ modoForm ? 'Voltar para Lista' : 'Novo Agendamento' }}
 </button>
 <br>
@@ -24,7 +46,7 @@
 
   <mat-form-field appearance="fill">
     <mat-label>Data</mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="novoAgendamento.data" />
+    <input matInput [matDatepicker]="picker" [(ngModel)]="novoAgendamento.data" placeholder="Escolha a data" />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
@@ -41,11 +63,12 @@
 
 <!-- LISTA -->
 <div *ngIf="!modoForm" class="cards">
-  <mat-card class="card animate" *ngFor="let ag of agendamentos; let i = index">
+  <mat-card class="card animate" *ngFor="let ag of agendamentosFiltrados; let i = index">
     <mat-icon class="icon">schedule</mat-icon>
     <div class="info">
       <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
       <p>{{ ag.servico }}</p>
+      <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
     </div>
     <div class="acoes">
       <button mat-icon-button color="primary" (click)="editar(i)">
@@ -64,8 +87,8 @@
     <mat-icon color="warn">warning</mat-icon>
     <span>Deseja remover este agendamento?</span>
     <div class="botoes">
-      <button mat-raised-button color="warn" (click)="confirmarExclusao()">Remover</button>
-      <button mat-stroked-button color="primary" (click)="cancelarExclusao()">Cancelar</button>
+      <button class="btn-remover" (click)="confirmarExclusao()">Remover</button>
+      <button class="btn-cancelar" (click)="cancelarExclusao()">Cancelar</button>
     </div>
   </div>
 </div>
