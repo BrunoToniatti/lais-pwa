@@ -349,6 +349,40 @@
   }
 }
 
+.overlay-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px) saturate(1.1);
+
+  .spinner {
+    width: 64px;
+    height: 64px;
+    border: 6px solid #ffb6ea;
+    border-top: 6px solid #ff5f8f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 2px 16px #ffb6ea88;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 900px) {
   .filtros {
     flex-direction: column;

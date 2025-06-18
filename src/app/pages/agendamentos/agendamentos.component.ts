@@ -24,6 +24,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
   ]
 })
 export class AgendamentosComponent implements OnInit {
+  carregando = false;
   modoForm = false;
   mensagemSucesso = '';
   editando: number | null = null;
@@ -107,34 +108,47 @@ export class AgendamentosComponent implements OnInit {
 
 
   salvar(): void {
-    const payload: Agendamento = {
-      client_name: this.novoAgendamento.nome,
-      client_email: this.novoAgendamento.email,
-      client_phone: this.novoAgendamento.phone,
-      service_type: this.novoAgendamento.procedimento,
-      appointment_date: this.formatarData(this.novoAgendamento.data),
-      appointment_time: this.novoAgendamento.hora
-    };
+  this.carregando = true;
 
-    if (this.editando !== null) {
-      const id = this.agendamentos[this.editando].id;
-      this.agendamentoService.atualizar(id, payload).subscribe({
-        next: () => {
-          this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
-          this.resetarForm();
-        },
-        error: (err) => console.error('Erro ao atualizar agendamento', err)
-      });
-    } else {
-      this.agendamentoService.criar(payload).subscribe({
-        next: () => {
-          this.mensagemSucesso = 'Agendamento salvo com sucesso!';
-          this.resetarForm();
-        },
-        error: (err) => console.error('Erro ao criar agendamento', err)
-      });
-    }
+  const payload: Agendamento = {
+    client_name: this.novoAgendamento.nome,
+    client_email: this.novoAgendamento.email,
+    client_phone: this.novoAgendamento.phone,
+    service_type: this.novoAgendamento.procedimento,
+    appointment_date: this.formatarData(this.novoAgendamento.data),
+    appointment_time: this.novoAgendamento.hora
+  };
+
+  const callback = () => {
+    this.carregando = false;
+    this.resetarForm();
+  };
+
+  if (this.editando !== null) {
+    const id = this.agendamentos[this.editando].id;
+    this.agendamentoService.atualizar(id, payload).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Agendamento atualizado com sucesso!';
+        callback();
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar agendamento', err);
+        this.carregando = false;
+      }
+    });
+  } else {
+    this.agendamentoService.criar(payload).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Agendamento salvo com sucesso!';
+        callback();
+      },
+      error: (err) => {
+        console.error('Erro ao criar agendamento', err);
+        this.carregando = false;
+      }
+    });
   }
+}
 
 
   editar(i: number) {
