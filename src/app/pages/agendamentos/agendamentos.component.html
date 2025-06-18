@@ -1,1 +1,49 @@
-<p>agendamentos works!</p>
+<h1 class="titulo">Agendamentos</h1>
+
+<div *ngIf="mensagemSucesso" class="mensagem-sucesso animate">
+  <mat-icon>check_circle</mat-icon> {{ mensagemSucesso }}
+</div>
+
+<button mat-raised-button color="primary" (click)="modoForm = !modoForm">
+  {{ modoForm ? 'Voltar para Lista' : 'Novo Agendamento' }}
+</button>
+<br>
+<br>
+
+<!-- FORMULÁRIO -->
+<div *ngIf="modoForm" class="formulario">
+  <mat-form-field appearance="fill">
+    <mat-label>Nome do Cliente</mat-label>
+    <input matInput [(ngModel)]="novoAgendamento.nome" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Procedimento</mat-label>
+    <input matInput [(ngModel)]="novoAgendamento.procedimento" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Data</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="novoAgendamento.data" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Hora</mat-label>
+    <input matInput [(ngModel)]="novoAgendamento.hora" placeholder="Ex: 14:30" />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="salvar()">Salvar Agendamento</button>
+</div>
+
+<!-- LISTA -->
+<div *ngIf="!modoForm" class="cards">
+  <mat-card class="card animate" *ngFor="let ag of agendamentos">
+    <mat-icon class="icon">schedule</mat-icon>
+    <div class="info">
+      <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
+      <p>{{ ag.servico }}</p>
+    </div>
+  </mat-card>
+</div>
