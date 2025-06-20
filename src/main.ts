@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core'; // ✅ importa aqui
+import { provideNgxMask } from 'ngx-mask';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -12,7 +13,8 @@ bootstrapApplication(AppComponent, {
       BrowserAnimationsModule,
       HttpClientModule
     ),
-    provideNativeDateAdapter(), // ✅ adiciona aqui
+    provideNgxMask(),
+    provideNativeDateAdapter(),
     ...appConfig
   ]
 });

@@ -57,7 +57,7 @@
 
   <mat-form-field appearance="fill">
     <mat-label>Telefone do Cliente</mat-label>
-    <input matInput [(ngModel)]="novoAgendamento.phone" />
+    <input mask="(00) 00000-0000" matInput [(ngModel)]="novoAgendamento.phone" placeholder="Ex: (11) 91234-5678"/>
   </mat-form-field>
 
   <mat-form-field>

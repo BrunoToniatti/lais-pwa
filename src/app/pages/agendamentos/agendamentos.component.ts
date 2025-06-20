@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ServiceService } from '../../services/service.service';
 import { MatSelectModule } from '@angular/material/select';
+import {  NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 
 @Component({
@@ -25,6 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatIcon,
     MatDatepickerModule,
     MatSelectModule,
+    NgxMaskDirective,
   ]
 })
 export class AgendamentosComponent implements OnInit {
