@@ -6,6 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { ClientService } from '../../services/client.service';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 @Component({
   selector: 'app-clientes',
@@ -17,49 +19,94 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxMaskDirective,
+    NgxMaskPipe
   ],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent {
-  busca: string = '';
-  nome: string = '';
-  telefone: string = '';
+  constructor(private clientApi: ClientService) { }
+
+  clientCreate: boolean = false;
+  busca = '';
+  nome = '';
+  telefone = '';
+  email = '';
   editando: number | null = null;
-  mensagem: string = '';
+  mensagem = '';
   confirmandoExclusao: number | null = null;
+  clientes: any[] = [];
+  clienteEditandoId: number | null = null;
 
-  clientes = [
-    { nome: 'Camila Souza', telefone: '(11) 99999-0001' },
-    { nome: 'Bruna Lima', telefone: '(11) 98888-0002' },
-    { nome: 'Jéssica Alves', telefone: '(11) 97777-0003' }
-  ];
+  ngOnInit() {
+    this.carregarClientes();
+  }
 
-  get clientesFiltrados() {
-    return this.clientes.filter(c =>
-      c.nome.toLowerCase().includes(this.busca.toLowerCase())
-    );
+  carregarClientes() {
+    this.clientApi.getAll().subscribe(res => {
+      this.clientes = res;
+    });
+  }
+
+  tratarErro(err: any) {
+    if (err.status === 400 && err.error) {
+      if (err.error.client_phone) {
+        this.mensagem = 'Já existe um cliente com esse número'; // mensagem amigável vinda do backend
+        this.clientCreate = false;
+      } else {
+        this.mensagem = 'Erro ao salvar cliente.';
+        this.clientCreate = false;
+      }
+    } else {
+      this.mensagem = 'Erro de conexão com o servidor.';
+      this.clientCreate = false;
+    }
+
+    setTimeout(() => this.mensagem = '', 4000);
   }
 
   salvarCliente() {
-    if (this.editando !== null) {
-      this.clientes[this.editando] = { nome: this.nome, telefone: this.telefone };
-      this.mensagem = 'Cliente atualizado com sucesso!';
-      this.editando = null;
+    const dados = {
+      client_name: this.nome,
+      client_phone: this.telefone,
+      client_email: this.email // ou um email fictício, se for opcional
+    };
+
+    if (this.clienteEditandoId !== null) {
+      this.clientApi.update(this.clienteEditandoId, dados).subscribe({
+        next: () => {
+          this.mensagem = 'Cliente atualizado com sucesso!';
+          this.resetarFormulario();
+          this.carregarClientes();
+        },
+        error: (err) => {
+          this.tratarErro(err);
+        }
+      });
     } else {
-      this.clientes.push({ nome: this.nome, telefone: this.telefone });
-      this.mensagem = 'Cliente adicionado com sucesso!';
+      this.clientApi.create(dados).subscribe({
+        next: () => {
+          this.mensagem = 'Cliente adicionado com sucesso!';
+          this.clientCreate = true;
+          this.resetarFormulario();
+          this.carregarClientes();
+        },
+        error: (err) => {
+          this.tratarErro(err);
+        }
+      });
     }
-    setTimeout(() => { this.mensagem = ''; }, 3000);
-    this.nome = '';
-    this.telefone = '';
   }
 
   editar(i: number) {
     this.editando = i;
-    this.nome = this.clientes[i].nome;
-    this.telefone = this.clientes[i].telefone;
+    const cliente = this.clientes[i];
+    this.nome = cliente.client_name;
+    this.telefone = cliente.client_phone;
+    this.email = cliente.client_email;
+    this.clienteEditandoId = cliente.id;
   }
 
   pedirConfirmacaoExclusao(i: number) {
@@ -67,15 +114,30 @@ export class ClientesComponent {
   }
 
   confirmarExclusao() {
-    if (this.confirmandoExclusao !== null) {
-      this.clientes.splice(this.confirmandoExclusao, 1);
+    const cliente = this.clientes[this.confirmandoExclusao!];
+    this.clientApi.delete(cliente.id).subscribe(() => {
       this.mensagem = 'Cliente removido com sucesso!';
-      setTimeout(() => { this.mensagem = ''; }, 3000);
+      this.carregarClientes();
       this.confirmandoExclusao = null;
-    }
+    });
   }
 
   cancelarExclusao() {
     this.confirmandoExclusao = null;
+  }
+
+  resetarFormulario() {
+    this.nome = '';
+    this.telefone = '';
+    this.email = '';
+    this.editando = null;
+    this.clienteEditandoId = null;
+    setTimeout(() => this.mensagem = '', 3000);
+  }
+
+  get clientesFiltrados() {
+    return this.clientes.filter(c =>
+      c.client_name.toLowerCase().includes(this.busca.toLowerCase())
+    );
   }
 }

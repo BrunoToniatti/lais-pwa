@@ -12,7 +12,8 @@ export class ServiceService {
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
-    const token = '3c07f0049dac3c17c16cc4fae40cf5b1d431522c'; // 🔁 Substitua aqui pelo token da Lais
+    const token = '3c07f0049dac3c17c16cc4fae40cf5b1d431522c'; // Produção
+    // const token = 'cc18ff3be38f470e043489c0c911efc9fdf83614' // Localhost
     return new HttpHeaders({
       Authorization: `Token ${token}`
     });

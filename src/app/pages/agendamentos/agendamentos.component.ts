@@ -10,6 +10,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ServiceService } from '../../services/service.service';
 import { MatSelectModule } from '@angular/material/select';
 import {  NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { Cliente } from '../../services/agendamento.service';
+import { ClientService } from '../../services/client.service'; // certifique-se que o service existe
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 
 @Component({
@@ -27,6 +30,7 @@ import {  NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
     MatDatepickerModule,
     MatSelectModule,
     NgxMaskDirective,
+    MatAutocompleteModule,
   ]
 })
 export class AgendamentosComponent implements OnInit {
@@ -54,10 +58,30 @@ export class AgendamentosComponent implements OnInit {
 
   constructor(
     private agendamentoService: AgendamentoService,
-    private serivceApi: ServiceService
+    private serivceApi: ServiceService,
+    private clientApi: ClientService
   ) { }
 
   procedimentos: string[] = []
+
+  sugestoesClientes: Cliente[] = [];
+
+buscarClientes(nome: string) {
+  if (nome.length < 2) return;
+
+  this.clientApi.getAll().subscribe((clientes: Cliente[]) => {
+    this.sugestoesClientes = clientes.filter((c: Cliente) =>
+      c.client_name.toLowerCase().includes(nome.toLowerCase())
+    );
+  });
+}
+
+selecionarCliente(c: Cliente) {
+  this.novoAgendamento.nome = c.client_name;
+  this.novoAgendamento.email = c.client_email || '';
+  this.novoAgendamento.phone = c.client_phone || '';
+  this.sugestoesClientes = []; // limpa a lista após selecionar
+}
 
   carregarServicos() {
     this.serivceApi.getAll().subscribe(data => {

@@ -128,6 +128,29 @@
     font-size: 22px;
   }
 }
+.mensagem-feedback-negative{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #ffe0e0 0%, #ffb2b2 100%);
+  color: #9a2121;
+  font-weight: 700;
+  font-size: 1.08rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px #ffb2b255;
+  padding: 12px 20px;
+  margin-bottom: 18px;
+  margin-top: 8px;
+  animation: fadeUp 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+  border: 1.5px solid #ffb2b2;
+  z-index: 2;
+
+  mat-icon {
+    color: #9a2121;
+    font-size: 22px;
+  }
+}
 
 .formulario-cliente {
   display: flex;

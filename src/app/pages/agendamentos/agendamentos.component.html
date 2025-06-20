@@ -46,9 +46,19 @@
 <div *ngIf="modoForm" class="formulario">
 
   <mat-form-field appearance="fill">
-    <mat-label>Nome do Cliente</mat-label>
-    <input matInput [(ngModel)]="novoAgendamento.nome" />
-  </mat-form-field>
+  <mat-label>Nome do Cliente</mat-label>
+  <input
+    matInput
+    [(ngModel)]="novoAgendamento.nome"
+    [matAutocomplete]="auto"
+    (ngModelChange)="buscarClientes($event)"
+  />
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let c of sugestoesClientes" (click)="selecionarCliente(c)">
+  {{ c.client_name }}
+</mat-option>
+  </mat-autocomplete>
+</mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Email do Cliente</mat-label>
