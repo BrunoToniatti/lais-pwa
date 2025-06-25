@@ -46,19 +46,15 @@
 <div *ngIf="modoForm" class="formulario">
 
   <mat-form-field appearance="fill">
-  <mat-label>Nome do Cliente</mat-label>
-  <input
-    matInput
-    [(ngModel)]="novoAgendamento.nome"
-    [matAutocomplete]="auto"
-    (ngModelChange)="buscarClientes($event)"
-  />
-  <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let c of sugestoesClientes" (click)="selecionarCliente(c)">
-  {{ c.client_name }}
-</mat-option>
-  </mat-autocomplete>
-</mat-form-field>
+    <mat-label>Nome do Cliente</mat-label>
+    <input matInput [(ngModel)]="novoAgendamento.nome" [matAutocomplete]="auto"
+      (ngModelChange)="buscarClientes($event)" />
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let c of sugestoesClientes" (click)="selecionarCliente(c)">
+        {{ c.client_name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Email do Cliente</mat-label>
@@ -67,7 +63,7 @@
 
   <mat-form-field appearance="fill">
     <mat-label>Telefone do Cliente</mat-label>
-    <input mask="(00) 00000-0000" matInput [(ngModel)]="novoAgendamento.phone" placeholder="Ex: (11) 91234-5678"/>
+    <input mask="(00) 00000-0000" matInput [(ngModel)]="novoAgendamento.phone" placeholder="Ex: (11) 91234-5678" />
   </mat-form-field>
 
   <mat-form-field>
@@ -77,6 +73,16 @@
         {{ procedimento }}
       </mat-option>
     </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Desconto</mat-label>
+    <input matInput
+       [(ngModel)]="novoAgendamento.discount_price"
+       placeholder="Ex: 20,00"
+       mask="separator.2"
+       thousandSeparator="."
+       decimalMarker="," />
   </mat-form-field>
 
   <mat-form-field appearance="fill">
@@ -111,6 +117,10 @@
       </button>
       <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusao(i)">
         <mat-icon>delete</mat-icon>
+      </button>
+      <!-- Botão adicional -->
+      <button mat-mini-fab color="accent" class="btn-finalizado" (click)="finalizarAgendamento(ag.id)">
+        <mat-icon>check</mat-icon>
       </button>
     </div>
   </mat-card>

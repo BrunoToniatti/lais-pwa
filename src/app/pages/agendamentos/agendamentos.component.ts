@@ -9,10 +9,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ServiceService } from '../../services/service.service';
 import { MatSelectModule } from '@angular/material/select';
-import {  NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { Cliente } from '../../services/agendamento.service';
 import { ClientService } from '../../services/client.service'; // certifique-se que o service existe
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 
 @Component({
@@ -52,6 +52,7 @@ export class AgendamentosComponent implements OnInit {
     email: '',
     phone: '',
     procedimento: '',
+    discount_price: '',
     data: '',
     hora: ''
   };
@@ -66,22 +67,22 @@ export class AgendamentosComponent implements OnInit {
 
   sugestoesClientes: Cliente[] = [];
 
-buscarClientes(nome: string) {
-  if (nome.length < 2) return;
+  buscarClientes(nome: string) {
+    if (nome.length < 2) return;
 
-  this.clientApi.getAll().subscribe((clientes: Cliente[]) => {
-    this.sugestoesClientes = clientes.filter((c: Cliente) =>
-      c.client_name.toLowerCase().includes(nome.toLowerCase())
-    );
-  });
-}
+    this.clientApi.getAll().subscribe((clientes: Cliente[]) => {
+      this.sugestoesClientes = clientes.filter((c: Cliente) =>
+        c.client_name.toLowerCase().includes(nome.toLowerCase())
+      );
+    });
+  }
 
-selecionarCliente(c: Cliente) {
-  this.novoAgendamento.nome = c.client_name;
-  this.novoAgendamento.email = c.client_email || '';
-  this.novoAgendamento.phone = c.client_phone || '';
-  this.sugestoesClientes = []; // limpa a lista após selecionar
-}
+  selecionarCliente(c: Cliente) {
+    this.novoAgendamento.nome = c.client_name;
+    this.novoAgendamento.email = c.client_email || '';
+    this.novoAgendamento.phone = c.client_phone || '';
+    this.sugestoesClientes = []; // limpa a lista após selecionar
+  }
 
   carregarServicos() {
     this.serivceApi.getAll().subscribe(data => {
@@ -104,6 +105,7 @@ selecionarCliente(c: Cliente) {
           email: a.client_email,
           telefone: a.client_phone,
           servico: a.service_type,
+          discount_price: a.discount_price,
           data: a.appointment_date,
           hora: a.appointment_time
         }));
@@ -111,6 +113,19 @@ selecionarCliente(c: Cliente) {
       },
       error: (err: any) => console.error('Erro ao buscar agendamentos', err)
 
+    });
+  }
+
+  finalizarAgendamento(id: number) {
+    this.agendamentoService.atualizarStatusFinalizado(id).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Status atualizado para "finalizado"!';
+        this.carregarAgendamentos();
+        setTimeout(() => this.mensagemSucesso = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erro ao finalizar agendamento', err);
+      }
     });
   }
 
@@ -145,7 +160,7 @@ selecionarCliente(c: Cliente) {
   resetarForm(): void {
     this.modoForm = false;
     this.editando = null;
-    this.novoAgendamento = { nome: '', email: '', phone: '', procedimento: '', data: '', hora: '' };
+    this.novoAgendamento = { nome: '', email: '', phone: '', procedimento: '', discount_price: '', data: '', hora: '' };
     this.carregarAgendamentos();
     setTimeout(() => this.mensagemSucesso = '', 3000);
   }
@@ -159,6 +174,7 @@ selecionarCliente(c: Cliente) {
       client_email: this.novoAgendamento.email,
       client_phone: this.novoAgendamento.phone,
       service_type: this.novoAgendamento.procedimento,
+      discount_price: Number(this.novoAgendamento.discount_price),
       appointment_date: this.formatarData(this.novoAgendamento.data),
       appointment_time: this.novoAgendamento.hora
     };
@@ -204,6 +220,7 @@ selecionarCliente(c: Cliente) {
       email: ag.email,
       phone: ag.telefone,
       procedimento: ag.servico,
+      discount_price: ag.discount_price,
       data: ag.data,
       hora: ag.hora
     };
