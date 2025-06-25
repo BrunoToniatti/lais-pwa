@@ -2,6 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export interface Servico {
+  name: string;
+  price: string;
+  duration: string;
+  duration_client: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })

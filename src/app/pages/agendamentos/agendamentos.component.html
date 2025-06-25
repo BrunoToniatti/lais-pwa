@@ -66,23 +66,30 @@
     <input mask="(00) 00000-0000" matInput [(ngModel)]="novoAgendamento.phone" placeholder="Ex: (11) 91234-5678" />
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Procedimento</mat-label>
+    <input matInput [(ngModel)]="novoAgendamento.procedimento" (ngModelChange)="buscarServicos($event)"
+      [matAutocomplete]="autoServicos" />
+    <mat-autocomplete #autoServicos="matAutocomplete">
+      <mat-option *ngFor="let s of sugestaoServicos" [value]="s.name">
+        {{ s.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- <mat-form-field>
     <mat-label>Procedimento</mat-label>
     <mat-select [(ngModel)]="novoAgendamento.procedimento">
       <mat-option *ngFor="let procedimento of procedimentos" [value]="procedimento">
         {{ procedimento }}
       </mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field> -->
 
   <mat-form-field appearance="fill">
     <mat-label>Desconto</mat-label>
-    <input matInput
-       [(ngModel)]="novoAgendamento.discount_price"
-       placeholder="Ex: 20,00"
-       mask="separator.2"
-       thousandSeparator="."
-       decimalMarker="," />
+    <input matInput [(ngModel)]="novoAgendamento.discount_price" placeholder="Ex: 20,00" mask="separator.2"
+      thousandSeparator="." decimalMarker="," />
   </mat-form-field>
 
   <mat-form-field appearance="fill">

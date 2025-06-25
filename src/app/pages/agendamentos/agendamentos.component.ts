@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AgendamentoService, Agendamento } from '../../services/agendamento.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,13 +6,14 @@ import { MatInputModule } from '@angular/material/input'; // obrigatório para <
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { ServiceService } from '../../services/service.service';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
-import { Cliente } from '../../services/agendamento.service';
-import { ClientService } from '../../services/client.service'; // certifique-se que o service existe
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
+import { ServiceService, Servico } from '../../services/service.service';
+import { Cliente } from '../../services/agendamento.service';
+import { ClientService } from '../../services/client.service'; // certifique-se que o service existe
+import { AgendamentoService, Agendamento } from '../../services/agendamento.service';
 
 @Component({
   selector: 'app-agendamentos',
@@ -75,6 +75,18 @@ export class AgendamentosComponent implements OnInit {
         c.client_name.toLowerCase().includes(nome.toLowerCase())
       );
     });
+  }
+
+  sugestaoServicos: Servico[] = [];
+
+  buscarServicos(nome: string) {
+    if(nome.length < 2) return;
+
+    this.serivceApi.getAll().subscribe((servicos: Servico[]) => {
+      this.sugestaoServicos = servicos.filter((s: Servico) =>
+        s.name.toLowerCase().includes(nome.toLowerCase())
+      )
+    })
   }
 
   selecionarCliente(c: Cliente) {
