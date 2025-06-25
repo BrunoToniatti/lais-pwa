@@ -20,6 +20,7 @@ export interface Agendamento {
   appointment_time: string;
   discount_price: number;
   service_type: string;
+  status?: string;
 }
 
 @Injectable({

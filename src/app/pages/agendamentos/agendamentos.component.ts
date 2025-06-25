@@ -111,7 +111,9 @@ export class AgendamentosComponent implements OnInit {
   carregarAgendamentos(): void {
     this.agendamentoService.listar().subscribe({
       next: (res) => {
-        this.agendamentos = res.map(a => ({
+        this.agendamentos = res
+        .filter(a => a.status === 'Agendado')
+        .map(a => ({
           id: a['id'],
           cliente: a.client_name,
           email: a.client_email,
@@ -119,7 +121,7 @@ export class AgendamentosComponent implements OnInit {
           servico: a.service_type,
           discount_price: a.discount_price,
           data: a.appointment_date,
-          hora: a.appointment_time
+          hora: a.appointment_time,
         }));
         this.filtrarPorData();
       },
