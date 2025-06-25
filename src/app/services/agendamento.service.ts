@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 
 export interface Cliente {
   client_name: string;
@@ -24,16 +26,13 @@ export interface Agendamento {
   providedIn: 'root'
 })
 export class AgendamentoService {
-  private apiUrl = 'https://api.laisbarretoribeiro.com/api/agendamentos/';
-  // private apiUrl = 'http://localhost:8000/api/agendamentos/';
+  private apiUrl = environment.apiUrl+'agendamentos/';
 
   constructor(private http: HttpClient) { }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = '3c07f0049dac3c17c16cc4fae40cf5b1d431522c'; // Produção
-    // const token = 'cc18ff3be38f470e043489c0c911efc9fdf83614' // Localhost
     return new HttpHeaders({
-      Authorization: `Token ${token}`
+      Authorization: `Token ${environment.token}`
     });
   }
 
