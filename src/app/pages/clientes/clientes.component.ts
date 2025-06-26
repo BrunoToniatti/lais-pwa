@@ -78,6 +78,7 @@ export class ClientesComponent {
       this.clientApi.update(this.clienteEditandoId, dados).subscribe({
         next: () => {
           this.mensagem = 'Cliente atualizado com sucesso!';
+          this.clientCreate = true;
           this.resetarFormulario();
           this.carregarClientes();
         },
