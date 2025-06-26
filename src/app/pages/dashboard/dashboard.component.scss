@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap');
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -19,8 +21,12 @@ body, :host {
   background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 50%, #fce4ec 100%);
   background-size: 200% 200%;
   animation: bgMove 12s ease-in-out infinite alternate;
+  font-family: 'Montserrat', sans-serif;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
+/* TÍTULO PRINCIPAL */
 .titulo {
   font-size: 2.3rem;
   font-weight: 800;
@@ -28,17 +34,20 @@ body, :host {
   margin-bottom: 28px;
   letter-spacing: 1px;
   text-shadow: 0 2px 16px #ffb6ea88, 0 1px 0 #fff;
-  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
   animation: fadeUp 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+  text-align: center;
 }
 
+/* GRID PRINCIPAL */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
   gap: 32px;
-  margin-bottom: 32px;
+  max-width: 1280px;
+  margin: 0 auto 48px auto;
 }
 
+/* CARTÕES */
 .card {
   padding: 32px 24px 28px 24px;
   background: rgba(255,255,255,0.65);
@@ -95,5 +104,179 @@ body, :host {
     color: #6d1b7b;
     font-weight: 500;
     z-index: 1;
+  }
+}
+
+/* LISTA DE ATENDIMENTOS */
+.subtitulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #c2185b;
+  margin-bottom: 16px;
+  text-align: center;
+  animation: fadeUp 0.7s ease-out;
+}
+
+.atendimentos-hoje {
+  max-width: 720px;
+  margin: 0 auto 48px auto;
+}
+
+.lista-atendimentos {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: fadeUp 1.1s ease-out;
+}
+
+.atendimento {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(255, 182, 234, 0.12);
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+  border-left: 6px solid #ff5f8f;
+
+  &:hover {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.75);
+  }
+
+  .horario {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #6d1b7b;
+    min-width: 70px;
+  }
+
+  .cliente-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    strong {
+      font-size: 1.05rem;
+      color: #c2185b;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: #6d1b7b;
+      display: block;
+    }
+
+    .icone-servico {
+      font-size: 36px;
+      color: #ff5f8f;
+      filter: drop-shadow(0 1px 4px #ffb6ea88);
+      border-radius: 12px;
+      padding: 6px;
+      background: rgba(255,255,255,0.5);
+      box-shadow: 0 2px 6px rgba(255,182,234,0.2);
+    }
+  }
+}
+
+/* RESPONSIVO */
+@media screen and (max-width: 768px) {
+  .titulo {
+    font-size: 2rem;
+  }
+
+  .subtitulo {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    gap: 24px;
+  }
+
+  .card {
+    padding: 24px 16px;
+  }
+
+  .atendimento {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    .cliente-info {
+      flex-direction: row;
+      gap: 12px;
+    }
+  }
+}
+
+.acoes {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+.botao {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+  &.finalizar {
+    background: #ff5f8f;
+    color: white;
+    &:hover {
+      background: #e91e63;
+    }
+  }
+
+  &.faltou {
+    background: #fce4ec;
+    color: #c2185b;
+    &:hover {
+      background: #f8bbd0;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .titulo {
+    font-size: 1.6rem;
+  }
+
+  .subtitulo {
+    font-size: 1.3rem;
+  }
+
+  .card h2 {
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+  }
+
+  .cliente-info strong {
+    font-size: 1rem;
+  }
+
+  .cliente-info span {
+    font-size: 0.85rem;
   }
 }
