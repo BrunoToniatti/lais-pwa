@@ -64,4 +64,17 @@ export class DashboardComponent {
       }
     });
   }
+
+  deleteAgendamento(id: number) {
+    this.agendamentoService.excluir(id).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Agendamento excluido com sucesso!';
+        this.carregarAgendamentosHoje();
+        setTimeout(() => this.mensagemSucesso = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erro ao cancelar agendamento', err)
+      }
+    });
+  }
 }

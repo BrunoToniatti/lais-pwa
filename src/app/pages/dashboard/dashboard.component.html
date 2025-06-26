@@ -1,6 +1,10 @@
 <section class="atendimentos-hoje">
   <h2 class="subtitulo">Atendimentos de Hoje</h2>
 
+  @if(mensagemSucesso){
+    <p class="succes-menssage"> <mat-icon>check</mat-icon> {{ mensagemSucesso }}</p>
+  }
+
   <ul class="lista-atendimentos">
     <li class="atendimento" *ngFor="let ag of agendamentos">
       <div class="horario">{{ ag.appointment_time }}</div>
@@ -15,6 +19,7 @@
 
       <div class="acoes">
         <button class="botao finalizar" (click)="finalizarAgendamento(ag.id!)">Finalizar</button>
+        <button class="botao faltou" (click)="deleteAgendamento(ag.id!)">Cliente faltou</button>
       </div>
     </li>
   </ul>

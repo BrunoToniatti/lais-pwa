@@ -226,6 +226,25 @@ body, :host {
   }
 }
 
+.succes-menssage{
+  border: 1px solid;
+  color: rgb(162, 245, 162);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  font-size: 18px;
+  font-weight: 600;
+  background-color: #fff;
+  border-radius: 30px;
+
+  mat-icon{
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 2.5px;
+  }
+}
+
 .botao {
   padding: 6px 12px;
   border: none;
@@ -278,5 +297,10 @@ body, :host {
 
   .cliente-info span {
     font-size: 0.85rem;
+  }
+
+  .succes-menssage{
+    font-size: 13px;
+  font-weight: 500;
   }
 }
