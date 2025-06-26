@@ -15,6 +15,9 @@ import { Cliente } from '../../services/agendamento.service';
 import { ClientService } from '../../services/client.service'; // certifique-se que o service existe
 import { AgendamentoService, Agendamento } from '../../services/agendamento.service';
 
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+
 @Component({
   selector: 'app-agendamentos',
   templateUrl: './agendamentos.component.html',
@@ -31,6 +34,7 @@ import { AgendamentoService, Agendamento } from '../../services/agendamento.serv
     MatSelectModule,
     NgxMaskDirective,
     MatAutocompleteModule,
+    MatSlideToggleModule,
   ]
 })
 export class AgendamentosComponent implements OnInit {
@@ -44,17 +48,18 @@ export class AgendamentosComponent implements OnInit {
   filtroCliente: string = '';
   filtroServico: string = '';
   agendamentosFiltrados: any[] = [];
+  showObservation = false;
 
   agendamentos: any[] = [];
 
   novoAgendamento = {
     nome: '',
-    email: '',
     phone: '',
     procedimento: '',
     discount_price: '',
     data: '',
-    hora: ''
+    hora: '',
+    comentario: ''
   };
 
   constructor(
@@ -91,7 +96,6 @@ export class AgendamentosComponent implements OnInit {
 
   selecionarCliente(c: Cliente) {
     this.novoAgendamento.nome = c.client_name;
-    this.novoAgendamento.email = c.client_email || '';
     this.novoAgendamento.phone = c.client_phone || '';
     this.sugestoesClientes = []; // limpa a lista após selecionar
   }
@@ -116,12 +120,12 @@ export class AgendamentosComponent implements OnInit {
         .map(a => ({
           id: a['id'],
           cliente: a.client_name,
-          email: a.client_email,
           telefone: a.client_phone,
           servico: a.service_type,
           discount_price: a.discount_price,
           data: a.appointment_date,
           hora: a.appointment_time,
+          comentario: a.coment
         }));
         this.filtrarPorData();
       },
@@ -174,7 +178,7 @@ export class AgendamentosComponent implements OnInit {
   resetarForm(): void {
     this.modoForm = false;
     this.editando = null;
-    this.novoAgendamento = { nome: '', email: '', phone: '', procedimento: '', discount_price: '', data: '', hora: '' };
+    this.novoAgendamento = { nome: '', phone: '', procedimento: '', discount_price: '', data: '', hora: '', comentario: '' };
     this.carregarAgendamentos();
     setTimeout(() => this.mensagemSucesso = '', 3000);
   }
@@ -185,12 +189,12 @@ export class AgendamentosComponent implements OnInit {
 
     const payload: Agendamento = {
       client_name: this.novoAgendamento.nome,
-      client_email: this.novoAgendamento.email,
       client_phone: this.novoAgendamento.phone,
       service_type: this.novoAgendamento.procedimento,
       discount_price: Number(this.novoAgendamento.discount_price),
       appointment_date: this.formatarData(this.novoAgendamento.data),
-      appointment_time: this.novoAgendamento.hora
+      appointment_time: this.novoAgendamento.hora,
+      coment: this.novoAgendamento.comentario
     };
 
     const callback = () => {
@@ -229,14 +233,15 @@ export class AgendamentosComponent implements OnInit {
 
   editar(i: number) {
     const ag = this.agendamentosFiltrados[i];
+    if(ag.comentario) this.showObservation = true;
     this.novoAgendamento = {
       nome: ag.cliente,
-      email: ag.email,
       phone: ag.telefone,
       procedimento: ag.servico,
       discount_price: ag.discount_price,
       data: ag.data,
-      hora: ag.hora
+      hora: ag.hora,
+      comentario: ag.comentario
     };
     // Encontrar o índice real no array principal
     this.editando = this.agendamentos.findIndex(a => a === ag);

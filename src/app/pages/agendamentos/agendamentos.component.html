@@ -56,10 +56,10 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <!-- <mat-form-field appearance="fill">
     <mat-label>Email do Cliente</mat-label>
     <input matInput [(ngModel)]="novoAgendamento.email" />
-  </mat-form-field>
+  </mat-form-field> -->
 
   <mat-form-field appearance="fill">
     <mat-label>Telefone do Cliente</mat-label>
@@ -104,6 +104,15 @@
     <input matInput [(ngModel)]="novoAgendamento.hora" placeholder="Ex: 14:30" />
   </mat-form-field>
 
+  <mat-slide-toggle [(ngModel)]="showObservation">
+    <p>Adicionar observação</p>
+  </mat-slide-toggle>
+
+  <mat-form-field appearance="fill" *ngIf="showObservation">
+    <mat-label>Observação</mat-label>
+    <textarea matInput [(ngModel)]="novoAgendamento.comentario"></textarea>
+  </mat-form-field>
+
   <button mat-raised-button color="primary" (click)="salvar()">
     {{ editando !== null ? 'Salvar Alteração' : 'Salvar Agendamento' }}
   </button>
@@ -117,6 +126,9 @@
       <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
       <p>{{ ag.servico }}</p>
       <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
+      <div class="comentario" *ngIf="ag.comentario">
+        <mat-icon>info</mat-icon> <p>{{ ag.comentario }}</p>
+      </div>
     </div>
     <div class="acoes">
       <button mat-icon-button color="primary" (click)="editar(i)">

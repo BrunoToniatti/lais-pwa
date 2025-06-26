@@ -2,7 +2,7 @@
   <h2 class="subtitulo">Atendimentos de Hoje</h2>
 
   @if(mensagemSucesso){
-    <p class="succes-menssage"> <mat-icon>check</mat-icon> {{ mensagemSucesso }}</p>
+  <p class="succes-menssage"> <mat-icon>check</mat-icon> {{ mensagemSucesso }}</p>
   }
 
   <ul class="lista-atendimentos">
@@ -14,7 +14,9 @@
         <div>
           <strong>{{ ag.client_name }}</strong>
           <span>{{ ag.service_type }}</span>
+          <span class="info" *ngIf="ag.coment"><mat-icon>info</mat-icon>{{ ag.coment }}</span>
         </div>
+
       </div>
 
       <div class="acoes">
