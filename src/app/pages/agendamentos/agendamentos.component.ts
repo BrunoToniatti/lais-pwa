@@ -230,6 +230,12 @@ export class AgendamentosComponent implements OnInit {
     }
   }
 
+  btNovoAgendamento(){
+    this.modoForm = !this.modoForm
+    this.editando = null
+    this.novoAgendamento = { nome: '', phone: '', procedimento: '', discount_price: '', data: '', hora: '', comentario: '' };
+  }
+
 
   editar(i: number) {
     const ag = this.agendamentosFiltrados[i];
