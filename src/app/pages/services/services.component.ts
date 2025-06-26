@@ -28,8 +28,10 @@ export class ServicesComponent implements OnInit {
   preco = '';
   duracao_cliente = '';
   editandoId: number | null = null;
-
+  showForm = false;
+  servicosFiltrados: any[] = [];
   services: any[] = [];
+  filtroCliente: string = '';
 
   constructor(private serviceApi: ServiceService) { }
 
@@ -40,6 +42,18 @@ export class ServicesComponent implements OnInit {
   carregarServicos() {
     this.serviceApi.getAll().subscribe(data => {
       this.services = data;
+      this.servicosFiltrados = data;
+    });
+  }
+
+  filtrarPorData() {
+    this.servicosFiltrados = this.services.filter(se => {
+      // Filtro por nome do servico
+      let nameOk = true;
+      if (this.filtroCliente) {
+        nameOk = se.name.toLowerCase().includes(this.filtroCliente.toLowerCase());
+      }
+      return nameOk;
     });
   }
 
@@ -64,12 +78,11 @@ export class ServicesComponent implements OnInit {
   }
 
   editarServico(servico: any) {
-    console.log('Serviço recebido:', servico);
+    this.showForm = true;
     this.nome = servico.name;
     this.preco = servico.price;
     this.duracao_cliente = servico.duracion_client;
     this.editandoId = servico.id;
-    console.log('Editando serviço ID:', this.editandoId); // ✅ debug
   }
 
   excluirServico(id: number) {

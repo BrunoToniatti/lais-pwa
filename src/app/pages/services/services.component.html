@@ -1,6 +1,7 @@
 <h1 class="titulo">Serviços</h1>
 
-<div class="form-servico">
+<!-- So vou mostrar o form se for editar ou se for criar novo serviço -->
+<div class="form-servico" *ngIf="showForm">
   <mat-form-field appearance="fill">
     <mat-label>Nome do Serviço</mat-label>
     <input matInput [(ngModel)]="nome" />
@@ -16,13 +17,28 @@
     <input matInput [(ngModel)]="duracao_cliente" />
   </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="salvarServico()">
+  <button mat-raised-button class="add-service" color="primary" (click)="salvarServico()">
     {{ editandoId !== null ? 'Atualizar Serviço' : 'Adicionar Serviço' }}
+  </button>
+
+  <button class="back-list" (click)="showForm = false">
+    Voltar lista
+  </button>
+</div>
+
+<div class="container" *ngIf="!showForm">
+  <mat-form-field appearance="fill" class="filtro-nome">
+    <mat-label>Pesquisar serviço</mat-label>
+    <input matInput [(ngModel)]="filtroCliente" (ngModelChange)="filtrarPorData()" placeholder="Nome do serviço" />
+    <mat-icon matSuffix>content_cut</mat-icon>
+  </mat-form-field>
+  <button class="new-service" (click)="showForm = true">
+    Novo Serviço
   </button>
 </div>
 
 <div class="cards">
-  <mat-card class="card" *ngFor="let serv of services; let i = index">
+  <mat-card class="card" *ngFor="let serv of servicosFiltrados; let i = index">
     <h2>{{ serv.name }}</h2>
     <p><strong>Preço:</strong> R$ {{ serv.price }}</p>
     <p><strong>Duração Cliente:</strong> {{ serv.duracion_client }}</p>
