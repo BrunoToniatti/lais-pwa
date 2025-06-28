@@ -129,6 +129,25 @@
   margin-bottom: 32px;
 }
 
+.divider{
+  border: 3px solid;
+  margin: 30px 0px;
+}
+
+.titulo-data {
+  position: relative;
+  display: inline-block;
+  font-size: 1.7rem;
+  font-weight: 900;
+  padding: 8px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff5f8f, #ffb6ea);
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(255, 91, 143, 0.6);
+  backdrop-filter: blur(6px);
+  animation: fadeUp 0.4s ease-out;
+}
+
 .card {
   display: flex;
   align-items: flex-start;
@@ -197,7 +216,8 @@
       display: flex;
       align-items: center;
       margin-top: 20px;
-      p{
+
+      p {
         margin-top: 2px;
       }
     }
@@ -549,7 +569,7 @@
   }
 }
 
-@media(max-width: 400px){
+@media(max-width: 400px) {
   info {
     .comentario {
       margin-top: 10px;

@@ -85,7 +85,7 @@ export class AgendamentosComponent implements OnInit {
   sugestaoServicos: Servico[] = [];
 
   buscarServicos(nome: string) {
-    if(nome.length < 2) return;
+    if (nome.length < 2) return;
 
     this.serivceApi.getAll().subscribe((servicos: Servico[]) => {
       this.sugestaoServicos = servicos.filter((s: Servico) =>
@@ -116,17 +116,17 @@ export class AgendamentosComponent implements OnInit {
     this.agendamentoService.listar().subscribe({
       next: (res) => {
         this.agendamentos = res
-        .filter(a => a.status === 'Agendado')
-        .map(a => ({
-          id: a['id'],
-          cliente: a.client_name,
-          telefone: a.client_phone,
-          servico: a.service_type,
-          discount_price: a.discount_price,
-          data: a.appointment_date,
-          hora: a.appointment_time,
-          comentario: a.coment
-        }));
+          .filter(a => a.status === 'Agendado')
+          .map(a => ({
+            id: a['id'],
+            cliente: a.client_name,
+            telefone: a.client_phone,
+            servico: a.service_type,
+            discount_price: a.discount_price,
+            data: a.appointment_date,
+            hora: a.appointment_time,
+            comentario: a.coment
+          }));
         this.filtrarPorData();
       },
       error: (err: any) => console.error('Erro ao buscar agendamentos', err)
@@ -147,26 +147,29 @@ export class AgendamentosComponent implements OnInit {
     });
   }
 
+  agendamentosAgrupados: { [data: string]: any[] } = {};
+
   filtrarPorData() {
-    this.agendamentosFiltrados = this.agendamentos.filter(ag => {
-      // Filtro por data
+    const filtrados = this.agendamentos.filter(ag => {
       let dataOk = true;
       if (this.dataFiltro) {
         const dataStr = this.dataFiltro.toISOString().slice(0, 10);
-        const agDataStr = (ag.data instanceof Date ? ag.data : new Date(ag.data)).toISOString().slice(0, 10);
+        const agDataStr = new Date(ag.data).toISOString().slice(0, 10);
         dataOk = agDataStr === dataStr;
       }
-      // Filtro por cliente
-      let clienteOk = true;
-      if (this.filtroCliente) {
-        clienteOk = ag.cliente.toLowerCase().includes(this.filtroCliente.toLowerCase());
-      }
-      // Filtro por serviço
-      let servicoOk = true;
-      if (this.filtroServico) {
-        servicoOk = ag.servico.toLowerCase().includes(this.filtroServico.toLowerCase());
-      }
+
+      let clienteOk = !this.filtroCliente || ag.cliente.toLowerCase().includes(this.filtroCliente.toLowerCase());
+      let servicoOk = !this.filtroServico || ag.servico.toLowerCase().includes(this.filtroServico.toLowerCase());
+
       return dataOk && clienteOk && servicoOk;
+    });
+
+    // Agrupar por data
+    this.agendamentosAgrupados = {};
+    filtrados.forEach(ag => {
+      const data = new Date(ag.data).toISOString().split('T')[0];
+      if (!this.agendamentosAgrupados[data]) this.agendamentosAgrupados[data] = [];
+      this.agendamentosAgrupados[data].push(ag);
     });
   }
 
@@ -230,16 +233,14 @@ export class AgendamentosComponent implements OnInit {
     }
   }
 
-  btNovoAgendamento(){
+  btNovoAgendamento() {
     this.modoForm = !this.modoForm
     this.editando = null
     this.novoAgendamento = { nome: '', phone: '', procedimento: '', discount_price: '', data: '', hora: '', comentario: '' };
   }
 
 
-  editar(i: number) {
-    const ag = this.agendamentosFiltrados[i];
-    if(ag.comentario) this.showObservation = true;
+  editarAgendamento(ag: any) {
     this.novoAgendamento = {
       nome: ag.cliente,
       phone: ag.telefone,
@@ -249,17 +250,18 @@ export class AgendamentosComponent implements OnInit {
       hora: ag.hora,
       comentario: ag.comentario
     };
-    // Encontrar o índice real no array principal
-    this.editando = this.agendamentos.findIndex(a => a === ag);
+    this.showObservation = !!ag.comentario;
+    this.editando = this.agendamentos.findIndex(a => a.id === ag.id);
     this.modoForm = true;
   }
 
-  pedirConfirmacaoExclusao(i: number) {
-    // Encontrar o índice real no array principal
-    const ag = this.agendamentosFiltrados[i];
-    this.confirmandoExclusao = this.agendamentos.findIndex(a => a === ag);
-  }
+  sortByDate = (a: any, b: any): number => {
+    return a.key > b.key ? 1 : -1;
+  };
 
+  pedirConfirmacaoExclusaoPorId(id: number) {
+    this.confirmandoExclusao = this.agendamentos.findIndex(a => a.id === id);
+  }
   confirmarExclusao() {
     if (this.confirmandoExclusao !== null) {
       const id = this.agendamentos[this.confirmandoExclusao].id;

@@ -119,30 +119,33 @@
 </div>
 
 <!-- LISTA -->
-<div *ngIf="!modoForm" class="cards">
-  <mat-card class="card animate" *ngFor="let ag of agendamentosFiltrados; let i = index">
-    <mat-icon class="icon">schedule</mat-icon>
-    <div class="info">
-      <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
-      <p>{{ ag.servico }}</p>
-      <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
-      <div class="comentario" *ngIf="ag.comentario">
-        <mat-icon>info</mat-icon> <p>{{ ag.comentario }}</p>
+<div *ngIf="!modoForm">
+  <div *ngFor="let data of agendamentosAgrupados | keyvalue: sortByDate">
+    <div class="divider"></div>
+    <h2 class="titulo-data">{{ data.key | date:'dd/MM/yyyy' }}</h2>
+    <mat-card class="card animate" *ngFor="let ag of data.value">
+      <mat-icon class="icon">schedule</mat-icon>
+      <div class="info">
+        <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
+        <p>{{ ag.servico }}</p>
+        <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
+        <div class="comentario" *ngIf="ag.comentario">
+          <mat-icon>info</mat-icon> <p>{{ ag.comentario }}</p>
+        </div>
       </div>
-    </div>
-    <div class="acoes">
-      <button mat-icon-button color="primary" (click)="editar(i)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusao(i)">
-        <mat-icon>delete</mat-icon>
-      </button>
-      <!-- Botão adicional -->
-      <button mat-mini-fab color="accent" class="btn-finalizado" (click)="finalizarAgendamento(ag.id)">
-        <mat-icon>check</mat-icon>
-      </button>
-    </div>
-  </mat-card>
+      <div class="acoes">
+        <button mat-icon-button color="primary" (click)="editarAgendamento(ag)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusaoPorId(ag.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-mini-fab color="accent" class="btn-finalizado" (click)="finalizarAgendamento(ag.id)">
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
 </div>
 
 <!-- Modal de confirmação de exclusão -->
