@@ -71,7 +71,6 @@ export class ClientesComponent {
     const dados = {
       client_name: this.nome,
       client_phone: this.telefone,
-      client_email: this.email // ou um email fictício, se for opcional
     };
 
     if (this.clienteEditandoId !== null) {
@@ -106,7 +105,6 @@ export class ClientesComponent {
     const cliente = this.clientes[i];
     this.nome = cliente.client_name;
     this.telefone = cliente.client_phone;
-    this.email = cliente.client_email;
     this.clienteEditandoId = cliente.id;
   }
 

@@ -14,7 +14,6 @@ export interface Cliente {
 export interface Agendamento {
   id?: number;
   client_name: string;
-  client_email?: string;
   client_phone?: string;
   appointment_date: string;
   appointment_time: string;
