@@ -1,11 +1,11 @@
 <div class="resumo-container">
   <div class="filtro-mes-container">
-  <label for="filtroMes">Filtrar por mês:</label>
-  <select id="filtroMes" [(ngModel)]="mesSelecionado" (change)="carregarAtendimentos()">
-    <option [ngValue]="null">Mês atual</option>
-    <option *ngFor="let m of meses" [value]="m.valor">{{ m.nome }}</option>
-  </select>
-</div>
+    <label for="filtroMes">Filtrar por mês:</label>
+    <select id="filtroMes" [(ngModel)]="mesSelecionado" (change)="carregarAtendimentos()">
+      <option [ngValue]="null">Mês atual</option>
+      <option *ngFor="let m of meses" [value]="m.valor">{{ m.nome }}</option>
+    </select>
+  </div>
   <div class="card resumo">
     <h3>Contas à Receber</h3>
     <p>{{ contasAReceber | currency:'BRL' }}</p>
@@ -19,7 +19,7 @@
 <div class="grafico-container">
   <h4>Desempenho Mensal</h4>
   <div class="grafico-barras">
-    <div *ngFor="let barra of graficoBarras" class="barra" [style.height.%]="barra.total">
+    <div *ngFor="let barra of graficoBarras" class="barra" [style.height.%]="barra.altura">
       <span class="valor">R$ {{ barra.total.toFixed(0) }}</span>
       <span class="dia">{{ barra.dia }}</span>
     </div>
@@ -73,4 +73,3 @@
     </div>
   </div>
 </div>
-

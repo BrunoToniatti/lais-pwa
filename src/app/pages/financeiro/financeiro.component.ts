@@ -24,11 +24,12 @@ interface AtendimentoFinanceiro {
 })
 export class FinanceiroComponent implements OnInit {
 
+
   atendimentosDoMes: AtendimentoFinanceiro[] = [];
   recebidos: number = 0;
   contasAReceber: number = 0;
 
-  graficoBarras: { dia: number, total: number }[] = [];
+  graficoBarras: Array<{ dia: number; total: number; altura: number }> = [];
 
   constructor(private atendimentoService: AgendamentoService) { }
 
@@ -73,10 +74,16 @@ export class FinanceiroComponent implements OnInit {
         }
       });
 
-      this.graficoBarras = Object.entries(porDia).map(([dia, total]) => ({
+      const barras = Object.entries(porDia).map(([dia, total]) => ({
         dia: parseInt(dia),
         total: total as number
       })).sort((a, b) => a.dia - b.dia);
+
+      const max = Math.max(...barras.map(b => b.total));
+      this.graficoBarras = barras.map(b => ({
+        ...b,
+        altura: max > 0 ? (b.total / max) * 100 : 0
+      }));
     });
   }
 }
