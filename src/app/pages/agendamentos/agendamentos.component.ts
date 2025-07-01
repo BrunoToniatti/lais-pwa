@@ -33,7 +33,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDatepickerModule,
     MatSelectModule,
     NgxMaskDirective,
-    NgxMaskPipe,
     MatAutocompleteModule,
     MatSlideToggleModule,
   ]
