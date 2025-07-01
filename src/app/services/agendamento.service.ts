@@ -17,10 +17,12 @@ export interface Agendamento {
   client_phone?: string;
   appointment_date: string;
   appointment_time: string;
-  discount_price: number;
   service_type: string;
   status?: string;
   coment?: string;
+  total_price?: number;
+  discount_price: number;
+  discount?: boolean;
 }
 
 @Injectable({

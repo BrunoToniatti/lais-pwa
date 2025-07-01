@@ -33,6 +33,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDatepickerModule,
     MatSelectModule,
     NgxMaskDirective,
+    NgxMaskPipe,
     MatAutocompleteModule,
     MatSlideToggleModule,
   ]
@@ -62,7 +63,7 @@ export class AgendamentosComponent implements OnInit {
     discount_price: '',
     data: '',
     hora: '',
-    comentario: ''
+    comentario: '',
   };
 
   constructor(
@@ -150,7 +151,10 @@ export class AgendamentosComponent implements OnInit {
             discount_price: a.discount_price,
             data: a.appointment_date,
             hora: a.appointment_time,
-            comentario: a.coment
+            comentario: a.coment,
+            valor: a.total_price,
+            desconto: a.discount,
+            desconto_valor: a.discount_price
           }));
         this.filtrarPorData();
       },

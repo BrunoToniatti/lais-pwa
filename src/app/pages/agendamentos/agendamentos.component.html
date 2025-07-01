@@ -137,6 +137,10 @@
       <div class="info">
         <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
         <p>{{ ag.servico }}</p>
+        <br>
+        <p *ngIf="ag.desconto">Desconto: {{ ag.desconto_valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
+        <p>Valor: {{ ag.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
+        <br>
         <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
         <div class="comentario" *ngIf="ag.comentario">
           <mat-icon>info</mat-icon>
