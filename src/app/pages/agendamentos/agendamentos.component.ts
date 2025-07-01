@@ -76,7 +76,7 @@ export class AgendamentosComponent implements OnInit {
   sugestoesClientes: Cliente[] = [];
 
   buscarClientes(nome: string) {
-    if (nome.length < 2) return;
+    if (nome?.length < 2) return;
 
     this.clientApi.getAll().subscribe((clientes: Cliente[]) => {
       this.sugestoesClientes = clientes.filter((c: Cliente) =>
@@ -109,7 +109,7 @@ export class AgendamentosComponent implements OnInit {
   sugestaoServicos: Servico[] = [];
 
   buscarServicos(nome: string) {
-    if (nome.length < 2) return;
+    if (nome?.length < 2) return;
 
     this.serivceApi.getAll().subscribe((servicos: Servico[]) => {
       this.sugestaoServicos = servicos.filter((s: Servico) =>
