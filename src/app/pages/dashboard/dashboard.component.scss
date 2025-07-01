@@ -181,11 +181,26 @@ body,
 
 
     }
+
     .info {
       margin-top: 5px;
       display: flex;
       align-items: center;
       font-weight: bold;
+    }
+
+    .price {
+      margin-top: 5px;
+      border-radius: 5px;
+      padding: 0px 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      span {
+        font-size: 15px;
+        color: #ff5f8f;
+      }
+
     }
 
     .icone-servico {

@@ -14,6 +14,10 @@
         <div>
           <strong>{{ ag.client_name }}</strong>
           <span>{{ ag.service_type }}</span>
+          <div class="price">
+            <span *ngIf="ag.discount">Desconto: {{ ag.discount_price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+            <span>Valor: {{ ag.total_price | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+          </div>
           <span class="info" *ngIf="ag.coment"><mat-icon>info</mat-icon>{{ ag.coment }}</span>
         </div>
 
