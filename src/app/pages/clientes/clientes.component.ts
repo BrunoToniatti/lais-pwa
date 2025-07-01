@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { ClientService } from '../../services/client.service';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { AgendamentoService } from '../../services/agendamento.service';
 
 @Component({
   selector: 'app-clientes',
@@ -27,7 +28,12 @@ import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent {
-  constructor(private clientApi: ClientService) { }
+  constructor(
+    private clientApi: ClientService,
+    private agendamentoApi: AgendamentoService
+  ) { }
+
+  formMode = false;
 
   clientCreate: boolean = false;
   busca = '';
@@ -40,14 +46,36 @@ export class ClientesComponent {
   clientes: any[] = [];
   clienteEditandoId: number | null = null;
 
+  ultimosAtendimentos: { [telefone: string]: any } = {};
+
   ngOnInit() {
     this.carregarClientes();
   }
 
+  getLastAppointment(phone: string) {
+    this.agendamentoApi.ultimoAtendimentoCliente(phone).subscribe(atendimento => {
+    })
+  }
   carregarClientes() {
     this.clientApi.getAll().subscribe(res => {
       this.clientes = res;
+
+      // Agora para cada cliente, busca o último atendimento
+      this.clientes.forEach(cliente => {
+        this.agendamentoApi.ultimoAtendimentoCliente(cliente.client_phone).subscribe(atendimento => {
+          this.ultimosAtendimentos[cliente.client_phone] = atendimento;
+        });
+      });
     });
+  }
+
+  formataData(date: string){
+    let date_separada = date.split('-');
+    let dia = date_separada[2];
+    let mes = date_separada[1];
+    let ano = date_separada[0];
+
+    return `${dia}/${mes}/${ano}`
   }
 
   tratarErro(err: any) {
@@ -66,6 +94,7 @@ export class ClientesComponent {
 
     setTimeout(() => this.mensagem = '', 4000);
   }
+
 
   salvarCliente() {
     const dados = {

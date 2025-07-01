@@ -66,4 +66,9 @@ export class AgendamentoService {
   excluir(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}agendamentos/${id}/`, { headers: this.getAuthHeaders() });
   }
+
+  // Buscar o último atendimento da cliente pelo telefone dela
+  ultimoAtendimentoCliente(phone: string): Observable<any>{
+    return this.http.get(`${this.apiUrl}last-appointment?client_phone=${phone}`, { headers: this.getAuthHeaders() })
+  }
 }
