@@ -54,7 +54,7 @@
       <h2>{{ cliente.client_name }}</h2>
       <p>{{ cliente.client_phone | mask: "(00) 00000-0000" }}</p>
       <br>
-      <div class="last" *ngIf="ultimosAtendimentos[cliente.client_phone]">
+      <div class="last" *ngIf="ultimosAtendimentos[cliente.client_phone]?.appointment_date">
         <h3>Último atendimento:</h3>
         <p>Nome: {{ ultimosAtendimentos[cliente.client_phone]?.service_type }}</p>
         <p>Data: {{ formataData(ultimosAtendimentos[cliente.client_phone]?.appointment_date) }} ás {{
