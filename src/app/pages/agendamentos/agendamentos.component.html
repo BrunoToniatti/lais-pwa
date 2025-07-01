@@ -99,6 +99,15 @@
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
+  <p *ngIf="sugestaoData"
+    style="background: #ffb6ea33; padding: 10px; border-left: 4px solid #ff5f8f; border-radius: 8px; font-weight: 500; color: #6a006a; margin-top: 10px;">
+    <mat-icon color="accent" style="vertical-align: middle;">event</mat-icon>
+    Sugestão: marcar a cliente após 15 dias do último atendimento.
+    <br>
+    Último procedimento: <strong>{{ sugestaoProcedimento }}</strong> |
+    Nova data sugerida: <strong>{{ sugestaoData | date:'dd/MM/yyyy' }}</strong>
+  </p>
+
   <mat-form-field appearance="fill">
     <mat-label>Hora</mat-label>
     <input matInput [(ngModel)]="novoAgendamento.hora" placeholder="Ex: 14:30" />
@@ -130,7 +139,8 @@
         <p>{{ ag.servico }}</p>
         <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
         <div class="comentario" *ngIf="ag.comentario">
-          <mat-icon>info</mat-icon> <p>{{ ag.comentario }}</p>
+          <mat-icon>info</mat-icon>
+          <p>{{ ag.comentario }}</p>
         </div>
       </div>
       <div class="acoes">

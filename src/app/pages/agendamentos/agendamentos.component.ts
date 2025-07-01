@@ -50,6 +50,9 @@ export class AgendamentosComponent implements OnInit {
   agendamentosFiltrados: any[] = [];
   showObservation = false;
 
+  sugestaoData: string = '';
+  sugestaoProcedimento: string = '';
+
   agendamentos: any[] = [];
 
   novoAgendamento = {
@@ -82,6 +85,27 @@ export class AgendamentosComponent implements OnInit {
     });
   }
 
+  buscarUltimoAtendimento(phone: string) {
+    this.agendamentoService.ultimoAtendimentoCliente(phone).subscribe({
+      next: atendimento => {
+        if (atendimento && atendimento.appointment_date) {
+          const dataUltima = new Date(atendimento.appointment_date);
+          const sugestao = new Date(dataUltima);
+          sugestao.setDate(sugestao.getDate() + 15);
+          this.sugestaoData = sugestao.toISOString().split('T')[0];
+          this.sugestaoProcedimento = atendimento.service_type || '';
+        } else {
+          this.sugestaoData = '';
+          this.sugestaoProcedimento = '';
+        }
+      },
+      error: () => {
+        this.sugestaoData = '';
+        this.sugestaoProcedimento = '';
+      }
+    });
+  }
+
   sugestaoServicos: Servico[] = [];
 
   buscarServicos(nome: string) {
@@ -97,6 +121,7 @@ export class AgendamentosComponent implements OnInit {
   selecionarCliente(c: Cliente) {
     this.novoAgendamento.nome = c.client_name;
     this.novoAgendamento.phone = c.client_phone || '';
+    this.buscarUltimoAtendimento(this.novoAgendamento.phone); // 👈 aqui
     this.sugestoesClientes = []; // limpa a lista após selecionar
   }
 
