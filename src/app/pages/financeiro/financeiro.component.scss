@@ -106,12 +106,50 @@
 @media (max-width: 600px) {
   .grafico-container {
     .grafico-barras {
-      gap: 4px;
-      padding: 10px 6px;
-      height: 160px;
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 30px 6px;
+      height: 180px;
+      position: relative;
+
+      &::before, &::after {
+        content: '';
+        position: sticky;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        pointer-events: none;
+        background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+        z-index: 1;
+      }
+
+      &::before {
+        left: 0;
+      }
+
+      &::after {
+        right: 0;
+        transform: rotate(180deg);
+      }
+
+      /* Estilização da barra de rolagem */
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #ffb6ea;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #ff5f8f;
+      }
 
       .barra {
-        min-width: 22px;
+        min-width: 24px; /* Define uma largura mínima maior para as barras */
+        margin-top: 50px; /* Adiciona mais espaço superior para evitar corte dos valores altos */
 
         .valor {
           font-size: 0.7rem;
