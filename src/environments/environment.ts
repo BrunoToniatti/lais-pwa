@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api/',
-  token: 'cc18ff3be38f470e043489c0c911efc9fdf83614'
+  apiUrl: 'https://apihomologa.laisbarretoribeiro.com/api/',
+  token: '1759a5c6ea101b459351248ce3c2ae406f7e9ab9'
 };

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.laisbarretoribeiro.com/api/',
-  token: '3c07f0049dac3c17c16cc4fae40cf5b1d431522c'
+  apiUrl: 'https://31.97.168.107:8001/api/',
+  token: '1759a5c6ea101b459351248ce3c2ae406f7e9ab9'
 };
