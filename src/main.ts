@@ -8,6 +8,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideNgxMask } from 'ngx-mask';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { LOCALE_ID } from '@angular/core';
 
 // ✅ REGISTRA O LOCALE PT-BR
 registerLocaleData(localePt, 'pt-BR');
@@ -20,6 +21,7 @@ bootstrapApplication(AppComponent, {
     ),
     provideNgxMask(),
     provideNativeDateAdapter(),
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     ...appConfig
   ]
 });

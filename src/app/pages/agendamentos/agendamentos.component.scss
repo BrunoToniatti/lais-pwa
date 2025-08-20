@@ -1,3 +1,436 @@
+// Animações para o calendário
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 92, 159, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 92, 159, 0.6), 0 0 30px rgba(255, 92, 159, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 92, 159, 0.3);
+  }
+}
+
+// Calendário Compacto
+.calendario-container {
+  max-width: 380px;
+  margin: 20px auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #ffffff, #f8f9ff);
+  border: 1px solid rgba(255, 92, 159, 0.1);
+  animation: slideIn 0.6s ease-out;
+
+  @media (max-width: 768px) {
+    max-width: calc(100% - 20px);
+    margin: 15px 10px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2), 0 6px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  .calendario-header-info {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(255, 92, 159, 0.1), rgba(255, 138, 92, 0.1));
+    border-bottom: 1px solid rgba(255, 92, 159, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.3s ease;
+
+    mat-icon {
+      color: #ff5c9f;
+      font-size: 18px;
+    }
+
+    span {
+      color: #ff5c9f;
+      font-weight: 600;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .badge-agendamentos {
+      background: linear-gradient(135deg, #ff5c9f, #ff8a5c);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(255, 92, 159, 0.3);
+      animation: pulse 2s infinite;
+
+      &:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s ease;
+      }
+    }
+
+    &.animate {
+      animation: bounceIn 0.3s ease;
+    }
+  }
+
+  .calendario-footer {
+    padding: 16px 20px;
+    background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 100%) !important;
+    border-top: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 0 0 20px 20px;
+    animation: fadeIn 0.5s ease;
+    box-shadow: 0 2px 8px #ffb6ea33 inset;
+
+    mat-icon {
+      color: #fff;
+      font-size: 20px;
+      animation: pulse 2s infinite;
+      filter: drop-shadow(0 1px 4px #ff5f8f88);
+    }
+
+    span {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 4px #ff5f8f44;
+      opacity: 1;
+    }
+  }
+}
+
+.calendario-compacto {
+  width: 100%;
+
+  ::ng-deep {
+    .mat-calendar {
+      width: 100%;
+      font-size: 14px;
+      background: transparent;
+
+      .mat-calendar-header {
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #ff5c9f 0%, #ff8a5c 50%, #ffb74d 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          animation: shine 3s infinite;
+        }
+
+        .mat-calendar-controls {
+          margin: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .mat-calendar-period-button {
+            color: white !important;
+            font-weight: 600;
+            font-size: 16px;
+            background: none !important;
+            border-radius: 25px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            text-transform: capitalize;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.2) !important;
+              transform: scale(1.05);
+            }
+          }
+
+          .mat-calendar-previous-button,
+          .mat-calendar-next-button {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.25) !important;
+              transform: scale(1.1) rotate(5deg);
+            }
+
+            .mat-icon {
+              font-size: 20px;
+            }
+          }
+        }
+      }
+
+      .mat-calendar-content {
+        padding: 20px;
+        background: linear-gradient(145deg, #ffffff, #f8f9ff);
+
+        .mat-calendar-table {
+          .mat-calendar-table-header th {
+            color: #ff5c9f;
+            font-size: 12px;
+            font-weight: 700;
+            height: 35px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: linear-gradient(135deg, #ff5c9f, #ff8a5c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+
+          .mat-calendar-body-cell {
+            height: 40px;
+            width: 40px;
+            position: relative;
+
+            @media (max-width: 768px) {
+              height: 44px;
+              width: 44px;
+            }
+
+            .mat-calendar-body-cell-content {
+              width: 36px;
+              height: 36px;
+              line-height: 36px;
+              font-size: 13px;
+              font-weight: 500;
+              border-radius: 50%;
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              position: relative;
+              cursor: pointer;
+              color: #333;
+
+              @media (max-width: 768px) {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 15px;
+              }
+
+              &:hover {
+                background: linear-gradient(135deg, #ff5c9f, #ff8a5c) !important;
+                color: white !important;
+                transform: scale(1.2);
+                box-shadow: 0 4px 15px rgba(255, 92, 159, 0.4);
+                animation: pulse 0.6s ease;
+              }
+            }
+
+            &.mat-calendar-body-selected .mat-calendar-body-cell-content {
+              background: linear-gradient(135deg, #ff5c9f, #ff8a5c) !important;
+              color: white !important;
+              font-weight: 700;
+              transform: scale(1.15);
+              box-shadow: 0 6px 20px rgba(255, 92, 159, 0.5);
+              animation: glow 2s infinite;
+
+              &::after {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #ff5c9f, #ff8a5c);
+                z-index: -1;
+                opacity: 0.3;
+                animation: pulse 1.5s infinite;
+              }
+            }
+
+            &.mat-calendar-body-today .mat-calendar-body-cell-content {
+              border: 2px solid #ff5c9f;
+              font-weight: 600;
+              color: #ff5c9f;
+              background: rgba(255, 92, 159, 0.1);
+
+              &::before {
+                content: '';
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                right: -1px;
+                bottom: -1px;
+                border-radius: 50%;
+                background: conic-gradient(from 0deg, #ff5c9f, #ff8a5c, #ffb74d, #ff5c9f);
+                z-index: -1;
+                animation: spin 3s linear infinite;
+              }
+            }
+
+            &.mat-calendar-body-disabled .mat-calendar-body-cell-content {
+              color: #ccc;
+              cursor: not-allowed;
+
+              &:hover {
+                background: none !important;
+                transform: none;
+                box-shadow: none;
+                animation: none;
+              }
+            }
+
+            /* garante que atinja as células internas do calendar */
+            :host ::ng-deep .mat-calendar-body-cell.dia-com-agendamento .mat-calendar-body-cell-content::after {
+              content: '';
+              display: block;
+              margin: 0 auto;
+              margin-top: 6px;
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background: #ff5f8f;
+              border: none;
+              box-shadow: none;
+              filter: none;
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// --- DARK CALENDAR THEME ---
+.calendario-container, .calendario-compacto ::ng-deep .mat-calendar {
+  background: linear-gradient(135deg, #23243a 0%, #2d2e48 100%) !important;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar {
+  color: #f3f3f3;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-header {
+  background: linear-gradient(135deg, #3a3b5a 0%, #23243a 100%) !important;
+  color: #ffb74d !important;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-table-header th {
+  color: #ffb74d !important;
+  background: none !important;
+  -webkit-text-fill-color: #ffb74d !important;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-body-cell {
+  .mat-calendar-body-cell-content {
+    background: none !important;
+    color: #f3f3f3 !important;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  &.mat-calendar-body-disabled .mat-calendar-body-cell-content {
+    color: #555 !important;
+    opacity: 0.4;
+  }
+  &.mat-calendar-body-other-month .mat-calendar-body-cell-content {
+    color: #555 !important;
+    opacity: 0.2;
+  }
+  &.mat-calendar-body-selected .mat-calendar-body-cell-content {
+    background: linear-gradient(135deg, #ff5c9f, #ff8a5c) !important;
+    color: #fff !important;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #ffb74d55;
+    border: 2px solid #ffb74d;
+    animation: glow 2s infinite;
+  }
+  &.mat-calendar-body-today .mat-calendar-body-cell-content {
+    border: 2px solid #ffb74d;
+    color: #ffb74d !important;
+    background: #23243a !important;
+    font-weight: 700;
+  }
+}
+
+// Ajuste para hover
+.calendario-compacto ::ng-deep .mat-calendar-body-cell .mat-calendar-body-cell-content:hover {
+  background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 100%) !important;
+  color: #fff0f5 !important;
+  transform: scale(1.18) rotate(-2deg);
+  box-shadow: 0 4px 16px #ffb6ea66, 0 1px 4px #ff5f8f33;
+  border: 2px solid #fff !important;
+  z-index: 2;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Ajuste para badge e header
+.calendario-header-info, .calendario-footer {
+  background: linear-gradient(135deg, #23243a 0%, #2d2e48 100%) !important;
+  color: #ffb74d !important;
+}
+
+.calendario-header-info .badge-agendamentos {
+  background: linear-gradient(135deg, #ffb74d, #ff5c9f) !important;
+  color: #23243a !important;
+}
+
+// Ajuste botão novo agendamento
+.btn-novo-agendamento {
+  background: linear-gradient(135deg, #ff5c9f 0%, #ffb74d 100%) !important;
+  color: #23243a !important;
+  border: none !important;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -20,6 +453,26 @@
   }
 }
 
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  80% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -27,6 +480,56 @@
 
   to {
     opacity: 1;
+  }
+}
+
+// Melhorar botão novo agendamento
+.btn-novo-agendamento {
+  background: linear-gradient(135deg, #ff5c9f 0%, #ff8a5c 50%, #ffb74d 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  box-shadow: 0 4px 15px rgba(255, 92, 159, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin: 20px auto !important;
+  display: block !important;
+  min-width: 200px !important;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.5s;
+  }
+
+  &:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(255, 92, 159, 0.4) !important;
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.02) !important;
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100% - 20px) !important;
+    min-width: unset !important;
+    margin: 20px 10px !important;
   }
 }
 
@@ -412,7 +915,7 @@
 
     mat-icon {
       font-size: 38px;
-      color: #ff5f8f;
+      color: #ff5c9f;
     }
 
     span {
@@ -586,5 +1089,274 @@
         color: red;
       }
     }
+  }
+}
+
+// --- CALENDÁRIO NO TEMA DO SITE ---
+.calendario-container, .calendario-compacto ::ng-deep .mat-calendar {
+  background: linear-gradient(120deg, #ff5f8f 0%, #ffb6ea 100%) !important;
+  color: #fff !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px #ffb6ea33;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-header {
+  background: linear-gradient(120deg, #ff5f8f 0%, #ffb6ea 100%) !important;
+  color: #fff !important;
+  border-bottom: 1px solid #ffb6ea88;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-table-header th {
+  color: #fff !important;
+  font-weight: 700;
+  background: none !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: 0 1px 4px #ff5f8f44;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-body-cell {
+  .mat-calendar-body-cell-content {
+    background: none !important;
+    color: #fff !important;
+    border-radius: 50%;
+    transition: all 0.2s;
+    font-weight: 500;
+    text-shadow: 0 1px 4px #ff5f8f33;
+  }
+  &.mat-calendar-body-disabled .mat-calendar-body-cell-content,
+  &.mat-calendar-body-other-month .mat-calendar-body-cell-content {
+    color: #fff !important;
+    opacity: 0.25;
+    text-shadow: none;
+  }
+  &.mat-calendar-body-selected .mat-calendar-body-cell-content {
+    background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 100%) !important;
+    color: #ff5f8f !important;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff5fa;
+    border: 2px solid #fff;
+    animation: glow 2s infinite;
+  }
+  &.mat-calendar-body-today .mat-calendar-body-cell-content {
+    border: 2px solid #fff;
+    color: #fff !important;
+    background: rgba(255,182,234,0.15) !important;
+    font-weight: 700;
+  }
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-body-cell .mat-calendar-body-cell-content:hover {
+  background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 100%) !important;
+  color: #fff0f5 !important;
+  transform: scale(1.18) rotate(-2deg);
+  box-shadow: 0 4px 16px #ffb6ea66, 0 1px 4px #ff5f8f33;
+  border: 2px solid #fff !important;
+  z-index: 2;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calendario-header-info, .calendario-footer {
+  background: linear-gradient(120deg, #ff5f8f 0%, #ffb6ea 100%) !important;
+  color: #fff !important;
+  border: none;
+}
+
+.calendario-header-info .badge-agendamentos {
+  background: #fff !important;
+  color: #ff5f8f !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #ffb6ea44;
+}
+
+.btn-novo-agendamento {
+  background: linear-gradient(120deg, #ff5f8f 0%, #ffb6ea 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px #ffb6ea44 !important;
+}
+
+.calendario-compacto ::ng-deep .mat-calendar-body-cell.dia-com-agendamento .mat-calendar-body-cell-content::after,
+.calendario-compacto ::ng-deep .mat-calendar-body-cell.mat-calendar-body-selected.dia-com-agendamento .mat-calendar-body-cell-content::after,
+.calendario-compacto ::ng-deep .mat-calendar-body-cell.mat-calendar-body-today.dia-com-agendamento .mat-calendar-body-cell-content::after {
+  content: '';
+  display: block;
+  margin: 0 auto;
+  margin-top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff5f8f;
+  border: none;
+  box-shadow: none;
+  filter: none;
+  opacity: 1;
+}
+
+.lista-agendamentos-dia {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.card-agendamento {
+  background: linear-gradient(120deg, #fff0f5 0%, #ffe6f7 100%);
+  border-radius: 22px;
+  box-shadow: 0 4px 24px #ffb6ea33, 0 1.5px 8px #ff5f8f22;
+  padding: 24px 20px 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  position: relative;
+  animation: fadeInSlide 0.7s cubic-bezier(0.4,0,0.2,1);
+  border: 2px solid #ffb6ea44;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.card-agendamento:hover {
+  box-shadow: 0 8px 32px #ffb6ea55, 0 2px 12px #ff5f8f33;
+  border: 2px solid #ff5f8f88;
+}
+
+.card-agendamento .icon-lash {
+  background: linear-gradient(120deg, #ffb6ea 0%, #ff5f8f 100%);
+  color: #fff;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 2px 8px #ffb6ea44;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.card-agendamento .info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-agendamento .info .nome-cliente {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ff5f8f;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.card-agendamento .info .hora-servico {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #a14b7a;
+  margin-bottom: 2px;
+}
+
+.card-agendamento .info .servico {
+  font-size: 1rem;
+  color: #7a3b5a;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.card-agendamento .info .valor {
+  font-size: 0.98rem;
+  color: #a14b7a;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.card-agendamento .info .desconto {
+  font-size: 0.95rem;
+  color: #ff5f8f;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.card-agendamento .info .comentario {
+  background: #fff0f5;
+  color: #a14b7a;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  margin-top: 6px;
+  box-shadow: 0 1px 4px #ffb6ea22;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-agendamento .acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.card-agendamento .acoes button {
+  background: #fff;
+  color: #ff5f8f;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px #ffb6ea33;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  mat-icon {
+    font-size: 22px;
+    color: #ff5f8f;
+    transition: color 0.2s;
+  }
+
+  &[color="warn"] mat-icon {
+    color: #e53935;
+  }
+
+  &[color="primary"] mat-icon {
+    color: #1976d2;
+  }
+
+  &[color="accent"] mat-icon {
+    color: #43a047;
+  }
+
+  &:hover {
+    background: #ffb6ea;
+  }
+
+  &:hover mat-icon {
+    color: #fff;
+  }
+}
+
+.card-agendamento .data-agendamento {
+  position: absolute;
+  top: 12px;
+  right: 22px;
+  background: #ffb6ea;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px #ffb6ea33;
+  letter-spacing: 0.5px;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

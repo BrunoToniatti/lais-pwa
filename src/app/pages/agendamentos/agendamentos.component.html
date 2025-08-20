@@ -1,26 +1,29 @@
 <h1 class="titulo">Agendamentos</h1>
 
-<div class="filtros" *ngIf="!modoForm">
-  <mat-form-field appearance="fill" class="filtro-data">
-    <mat-label>Filtrar por data</mat-label>
-    <input matInput [matDatepicker]="filtroPicker" [(ngModel)]="dataFiltro" (dateChange)="filtrarPorData()"
-      placeholder="Escolha a data" />
-    <mat-datepicker-toggle matSuffix [for]="filtroPicker"></mat-datepicker-toggle>
-    <mat-datepicker #filtroPicker></mat-datepicker>
-  </mat-form-field>
-  <mat-form-field appearance="fill" class="filtro-nome">
-    <mat-label>Filtrar por cliente</mat-label>
-    <input matInput [(ngModel)]="filtroCliente" (ngModelChange)="filtrarPorData()" placeholder="Nome do cliente" />
-    <mat-icon matSuffix>person_search</mat-icon>
-  </mat-form-field>
-  <mat-form-field appearance="fill" class="filtro-servico">
-    <mat-label>Filtrar por serviço</mat-label>
-    <input matInput [(ngModel)]="filtroServico" (ngModelChange)="filtrarPorData()" placeholder="Tipo de serviço" />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-  <button mat-stroked-button color="primary" class="btn-limpar" (click)="limparFiltros()">
-    <mat-icon>close</mat-icon> Limpar Filtros
-  </button>
+<!-- Calendário Compacto -->
+<div class="calendario-container" *ngIf="!modoForm">
+  <div class="calendario-header-info" *ngIf="dataSelecionada">
+    <mat-icon>event</mat-icon>
+    <span>{{ dataSelecionada | date:'dd/MM/yyyy':'pt-BR' }}</span>
+    <div class="badge-agendamentos" *ngIf="obterQuantidadeAgendamentosDia(dataSelecionada) > 0">
+      {{ obterQuantidadeAgendamentosDia(dataSelecionada) }}
+      {{ obterQuantidadeAgendamentosDia(dataSelecionada) === 1 ? 'agendamento' : 'agendamentos' }}
+    </div>
+  </div>
+
+  <mat-calendar
+  [(selected)]="dataSelecionada"
+  (selectedChange)="selecionarData($event)"
+  [dateClass]="dateClass"
+  class="calendario-compacto">
+</mat-calendar>
+
+
+
+  <div class="calendario-footer" *ngIf="!dataSelecionada">
+    <mat-icon>touch_app</mat-icon>
+    <span>Toque em uma data para ver os agendamentos</span>
+  </div>
 </div>
 
 <div *ngIf="mensagemSucesso" class="mensagem-sucesso animate">
@@ -128,37 +131,50 @@
 </div>
 
 <!-- LISTA -->
-<div *ngIf="!modoForm">
+<div *ngIf="!modoForm && dataSelecionada" class="lista-agendamentos-dia">
   <div *ngFor="let data of agendamentosAgrupados | keyvalue: sortByDate">
-    <div class="divider"></div>
-    <h2 class="titulo-data">{{ data.key | date:'dd/MM/yyyy' }}</h2>
-    <mat-card class="card animate" *ngFor="let ag of data.value">
-      <mat-icon class="icon">schedule</mat-icon>
-      <div class="info">
-        <h2>{{ ag.hora }} - {{ ag.cliente }}</h2>
-        <p>{{ ag.servico }}</p>
-        <br>
-        <p *ngIf="ag.desconto">Desconto: {{ ag.desconto_valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
-        <p>Valor: {{ ag.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
-        <br>
-        <span class="data-agendamento">{{ ag.data | date:'dd/MM/yyyy' }}</span>
-        <div class="comentario" *ngIf="ag.comentario">
-          <mat-icon>info</mat-icon>
-          <p>{{ ag.comentario }}</p>
+    <ng-container *ngFor="let ag of data.value">
+      <div class="card-agendamento animate">
+        <div class="icon-lash">
+          <mat-icon>spa</mat-icon>
         </div>
+        <div class="info">
+          <div class="nome-cliente">{{ ag.cliente }}</div>
+          <div class="hora-servico">
+            <mat-icon style="font-size:16px;vertical-align:middle;color:#ffb6ea;">schedule</mat-icon>
+            {{ ag.hora }}
+          </div>
+          <div class="servico">
+            <mat-icon style="font-size:16px;vertical-align:middle;color:#ffb6ea;">star</mat-icon>
+            {{ ag.servico }}
+          </div>
+          <div class="valor">
+            <mat-icon style="font-size:16px;vertical-align:middle;color:#ffb6ea;">attach_money</mat-icon>
+            {{ ag.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </div>
+          <div class="desconto" *ngIf="ag.desconto">
+            <mat-icon style="font-size:16px;vertical-align:middle;color:#ffb6ea;">local_offer</mat-icon>
+            Desconto: {{ ag.desconto_valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </div>
+          <div class="comentario" *ngIf="ag.comentario">
+            <mat-icon style="font-size:16px;vertical-align:middle;color:#ffb6ea;">info</mat-icon>
+            {{ ag.comentario }}
+          </div>
+        </div>
+        <div class="acoes">
+          <button mat-icon-button color="primary" (click)="editarAgendamento(ag)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusaoPorId(ag.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-mini-fab color="accent" class="btn-finalizado" (click)="finalizarAgendamento(ag.id)">
+            <mat-icon>check</mat-icon>
+          </button>
+        </div>
+        <!-- Data removida -->
       </div>
-      <div class="acoes">
-        <button mat-icon-button color="primary" (click)="editarAgendamento(ag)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="pedirConfirmacaoExclusaoPorId(ag.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-mini-fab color="accent" class="btn-finalizado" (click)="finalizarAgendamento(ag.id)">
-          <mat-icon>check</mat-icon>
-        </button>
-      </div>
-    </mat-card>
+    </ng-container>
   </div>
 </div>
 
