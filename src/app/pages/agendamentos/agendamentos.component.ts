@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
+import { ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'; // obrigatório para <input matInput>
-import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCalendar } from '@angular/material/datepicker';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
@@ -28,16 +30,36 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCard,
     MatIcon,
     MatDatepickerModule,
     MatSelectModule,
     NgxMaskDirective,
     MatAutocompleteModule,
     MatSlideToggleModule,
+    MatCalendar,
   ]
 })
 export class AgendamentosComponent implements OnInit {
+
+  @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
+
+private daysWithAppointments = new Set<number>();
+
+private toLocalYmdDate(d: string | Date): Date {
+  if (d instanceof Date) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  // string "YYYY-MM-DD" -> criar como **local** (evita pular pro dia anterior no -03:00)
+  const [y, m, day] = d.split('-').map(Number);
+  return new Date(y, (m - 1), day);
+}
+private dayKey(dt: Date): number {
+  const d = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  return d.getTime(); // chave por dia (00:00 local)
+}
+
+dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
+  if (view !== 'month') return '';
+  return this.daysWithAppointments.has(this.dayKey(cellDate)) ? 'dia-com-agendamento' : '';
+};
   mensagemErro: string = '';
   carregando = false;
   modoForm = false;
@@ -45,6 +67,7 @@ export class AgendamentosComponent implements OnInit {
   editando: number | null = null;
   confirmandoExclusao: number | null = null;
   dataFiltro: Date | null = null;
+  dataSelecionada: Date | null = null;
   filtroCliente: string = '';
   filtroServico: string = '';
   agendamentosFiltrados: any[] = [];
@@ -68,7 +91,8 @@ export class AgendamentosComponent implements OnInit {
   constructor(
     private agendamentoService: AgendamentoService,
     private serivceApi: ServiceService,
-    private clientApi: ClientService
+    private clientApi: ClientService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   procedimentos: string[] = []
@@ -138,29 +162,40 @@ export class AgendamentosComponent implements OnInit {
   }
 
   carregarAgendamentos(): void {
-    this.agendamentoService.listar().subscribe({
-      next: (res) => {
-        this.agendamentos = res
-          .filter(a => a.status === 'Agendado')
-          .map(a => ({
-            id: a['id'],
-            cliente: a.client_name,
-            telefone: a.client_phone,
-            servico: a.service_type,
-            discount_price: a.discount_price,
-            data: a.appointment_date,
-            hora: a.appointment_time,
-            comentario: a.coment,
-            valor: a.total_price,
-            desconto: a.discount,
-            desconto_valor: a.discount_price
-          }));
-        this.filtrarPorData();
-      },
-      error: (err: any) => console.error('Erro ao buscar agendamentos', err)
+  this.agendamentoService.listar().subscribe({
+    next: (res) => {
+      this.agendamentos = res
+        .filter(a => a.status === 'Agendado')
+        .map(a => ({
+          id: a['id'],
+          cliente: a.client_name,
+          telefone: a.client_phone,
+          servico: a.service_type,
+          discount_price: a.discount_price,
+          data: a.appointment_date, // "YYYY-MM-DD" ou Date
+          hora: a.appointment_time,
+          comentario: a.coment,
+          valor: a.total_price,
+          desconto: a.discount,
+          desconto_valor: a.discount_price
+        }));
 
-    });
-  }
+      // Recria o Set de dias com agendamento
+      this.daysWithAppointments.clear();
+      for (const ag of this.agendamentos) {
+        const d = this.toLocalYmdDate(ag.data);
+        this.daysWithAppointments.add(this.dayKey(d));
+      }
+
+      this.filtrarPorData();
+
+      // Força o calendário a recalcular as classes
+      this.cdr.detectChanges();
+      if (this.calendar) this.calendar.updateTodaysDate();
+    },
+    error: (err) => console.error('Erro ao buscar agendamentos', err)
+  });
+}
 
   finalizarAgendamento(id: number) {
     this.agendamentoService.atualizarStatusFinalizado(id).subscribe({
@@ -199,6 +234,28 @@ export class AgendamentosComponent implements OnInit {
       if (!this.agendamentosAgrupados[data]) this.agendamentosAgrupados[data] = [];
       this.agendamentosAgrupados[data].push(ag);
     });
+  }
+
+  selecionarData(data: Date | null) {
+    this.dataSelecionada = data;
+    if (data) {
+      // Filtra agendamentos para a data selecionada
+      this.dataFiltro = data;
+      this.filtrarPorData();
+
+      // Adicionar pequena animação de confirmação
+      const elemento = document.querySelector('.calendario-header-info');
+      if (elemento) {
+        elemento.classList.add('animate');
+        setTimeout(() => elemento.classList.remove('animate'), 300);
+      }
+    }
+  }
+
+  obterQuantidadeAgendamentosDia(data: Date): number {
+    if (!data) return 0;
+    const dataStr = data.toISOString().split('T')[0];
+    return this.agendamentosAgrupados[dataStr]?.length || 0;
   }
 
   formatDate(date: string): string {
@@ -326,4 +383,18 @@ export class AgendamentosComponent implements OnInit {
     const d = new Date(data);
     return d.toISOString().split('T')[0];
   }
+
+  getDateClass = (date: Date): string => {
+  if (!this.agendamentos || this.agendamentos.length === 0) return '';
+
+  const dataStr = date.toISOString().split('T')[0]; // yyyy-MM-dd
+
+  const existe = this.agendamentos.some(ag => {
+    const agDataStr = new Date(ag.data).toISOString().split('T')[0];
+    return agDataStr === dataStr;
+  });
+
+  return existe ? 'dia-com-agendamento' : '';
+};
+
 }
