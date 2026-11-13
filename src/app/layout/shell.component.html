@@ -1,0 +1,81 @@
+@if (!pwa.online()) {
+  <div class="banner banner--offline" role="status">
+    <app-icon name="offline" /> Sem conexão. Você está vendo os dados salvos no aparelho.
+  </div>
+}
+@if (pwa.updateReady()) {
+  <div class="banner banner--update" role="status">
+    Nova versão disponível.
+    <button type="button" (click)="pwa.reload()"><app-icon name="refresh" /> Atualizar</button>
+  </div>
+}
+
+<div class="shell">
+  <aside class="side" aria-label="Menu principal">
+    <a class="brand" routerLink="/painel">
+      <span class="brand__mark">L</span>
+      <span class="brand__text">
+        <strong>Lais</strong>
+        <small>Platform</small>
+      </span>
+    </a>
+
+    <nav class="side__nav">
+      @for (item of nav; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="is-active" [title]="item.label">
+          <app-icon [name]="item.icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="side__foot">
+      @if (pwa.canInstall()) {
+        <button type="button" class="side__btn" (click)="pwa.install()" title="Instalar app">
+          <app-icon name="download" /><span>Instalar app</span>
+        </button>
+      }
+      <button type="button" class="side__btn" (click)="auth.logout()" title="Sair">
+        <app-icon name="logout" /><span>Sair ({{ auth.username() }})</span>
+      </button>
+    </div>
+  </aside>
+
+  <header class="top">
+    <a class="brand brand--compact" routerLink="/painel">
+      <span class="brand__mark">L</span>
+      <strong>Lais Platform</strong>
+    </a>
+    <div class="top__actions">
+      @if (pwa.canInstall()) {
+        <button type="button" class="icon-btn" (click)="pwa.install()" aria-label="Instalar app">
+          <app-icon name="download" />
+        </button>
+      }
+      <button type="button" class="icon-btn" (click)="auth.logout()" aria-label="Sair">
+        <app-icon name="logout" />
+      </button>
+    </div>
+  </header>
+
+  <main class="main" [@page]="section()">
+    <router-outlet />
+  </main>
+
+  <nav class="tabbar" aria-label="Menu principal">
+    @for (item of nav; track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="is-active">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+</div>
+
+<div class="toasts" aria-live="polite">
+  @for (t of toast.toasts(); track t.id) {
+    <button type="button" class="toast" [class.toast--error]="t.kind === 'error'" (click)="toast.dismiss(t.id)">
+      {{ t.message }}
+    </button>
+  }
+</div>

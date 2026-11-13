@@ -1,0 +1,117 @@
+<header class="head rise">
+  <a class="back" routerLink="/campanhas"><app-icon name="back" /> Campanhas</a>
+  <h1 class="page-title">{{ isEdit() ? 'Editar campanha' : 'Nova campanha' }}</h1>
+</header>
+
+@if (loading()) {
+  <div class="skeleton sk"></div>
+} @else {
+  <div class="layout">
+    <form class="card form rise" style="--i: 1" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <fieldset>
+        <legend>Campanha</legend>
+        <label class="field" [class.field--error]="invalid('name')">
+          <span>Nome</span>
+          <input formControlName="name" placeholder="Ex.: Primeira visita 10% OFF" />
+          @if (invalid('name')) { <small>Informe o nome da campanha.</small> }
+        </label>
+        <label class="field">
+          <span>Descrição interna</span>
+          <textarea formControlName="description" rows="2" placeholder="Só você vê isto"></textarea>
+        </label>
+        <div class="two">
+          <label class="field">
+            <span>Status</span>
+            <select formControlName="status">
+              @for (s of statuses; track s.value) { <option [value]="s.value">{{ s.label }}</option> }
+            </select>
+          </label>
+          <label class="field">
+            <span>Público</span>
+            <select formControlName="audience">
+              @for (a of audiences; track a.value) { <option [value]="a.value">{{ a.label }}</option> }
+            </select>
+          </label>
+        </div>
+        <div class="two">
+          <label class="field"><span>Início</span><input type="datetime-local" formControlName="starts_at" /></label>
+          <label class="field"><span>Fim</span><input type="datetime-local" formControlName="ends_at" /></label>
+        </div>
+        <label class="field">
+          <span>Prioridade (menor aparece primeiro)</span>
+          <input type="number" inputmode="numeric" formControlName="priority" />
+        </label>
+      </fieldset>
+
+      <fieldset formGroupName="modal">
+        <legend>Modal no site</legend>
+        <label class="field" [class.field--error]="invalid('modal.title')">
+          <span>Título</span>
+          <input formControlName="title" placeholder="10% OFF na primeira visita" />
+          @if (invalid('modal.title')) { <small>Informe o título do modal.</small> }
+        </label>
+        <label class="field">
+          <span>Texto</span>
+          <textarea formControlName="body" rows="3" placeholder="Conte a oferta em poucas palavras"></textarea>
+        </label>
+        <label class="field" [class.field--error]="invalid('modal.image_url')">
+          <span>Imagem (link)</span>
+          <input formControlName="image_url" inputmode="url" placeholder="https://..." />
+          @if (invalid('modal.image_url')) { <small>Use um link começando com http:// ou https://.</small> }
+        </label>
+        <div class="two">
+          <label class="field" [class.field--error]="invalid('modal.cta_label')">
+            <span>Texto do botão</span>
+            <input formControlName="cta_label" />
+          </label>
+          <label class="field" [class.field--error]="invalid('modal.cta_url')">
+            <span>Link do botão</span>
+            <input formControlName="cta_url" inputmode="url" placeholder="https://wa.me/..." />
+            @if (invalid('modal.cta_url')) { <small>Link inválido.</small> }
+          </label>
+        </div>
+        <div class="two">
+          <label class="field">
+            <span>Aparecer após (segundos)</span>
+            <input type="number" inputmode="numeric" formControlName="delay_seconds" />
+          </label>
+          <label class="field">
+            <span>Frequência</span>
+            <select formControlName="frequency">
+              @for (f of frequencies; track f.value) { <option [value]="f.value">{{ f.label }}</option> }
+            </select>
+          </label>
+        </div>
+        <label class="field" [class.field--error]="invalid('modal.pages')">
+          <span>Páginas (uma por linha, comece com /)</span>
+          <textarea formControlName="pages" rows="2"></textarea>
+          @if (invalid('modal.pages')) { <small>Cada página deve começar com "/".</small> }
+        </label>
+      </fieldset>
+
+      <div class="actions">
+        <a class="btn btn--ghost" routerLink="/campanhas">Cancelar</a>
+        <button class="btn btn--gold" type="submit" [disabled]="saving()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+      </div>
+    </form>
+
+    <aside class="preview rise" style="--i: 2" aria-label="Pré-visualização do modal">
+      <div class="preview__bar">
+        <strong>Pré-visualização</strong>
+        <div class="seg">
+          <button type="button" [class.is-on]="device() === 'mobile'" (click)="device.set('mobile')">Celular</button>
+          <button type="button" [class.is-on]="device() === 'desktop'" (click)="device.set('desktop')">Computador</button>
+        </div>
+      </div>
+      <div class="stage" [class.stage--desktop]="device() === 'desktop'">
+        <div class="modal">
+          @if (preview().image_url) { <img class="modal__img" [src]="preview().image_url" alt="" /> }
+          <h3>{{ preview().title || 'Título do modal' }}</h3>
+          @if (preview().body) { <p>{{ preview().body }}</p> }
+          <span class="modal__cta">{{ preview().cta_label || 'Botão' }}</span>
+          <small>Fechar</small>
+        </div>
+      </div>
+    </aside>
+  </div>
+}

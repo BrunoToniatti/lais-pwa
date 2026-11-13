@@ -1,27 +1,39 @@
-# LaisPwa
+# Lais Platform — PWA
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Painel administrativo da plataforma de gestão, governança e CRO da Laís.
+Angular 17, instalável (PWA), responsivo e com animações.
 
-## Development server
+## Telas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+| Rota | O que tem |
+|---|---|
+| `/login` | Login real contra a API (sem senha ou token no código) |
+| `/painel` | Indicadores animados, gráfico de exibições e cliques, campanhas em destaque |
+| `/campanhas` | Lista com filtros, ativar/pausar, editar e excluir |
+| `/campanhas/nova` · `/campanhas/:id` | Formulário com pré-visualização do modal (celular e computador) |
+| `/historico` | Linha do tempo de auditoria (somente leitura) |
 
-## Code scaffolding
+## Responsivo (celular, tablet e computador)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Celular:** barra superior e abas na parte de baixo, com área segura do iPhone.
+- **Tablet (≥ 768px):** menu lateral compacto só com ícones.
+- **Computador (≥ 1100px):** menu lateral completo.
 
-## Build
+## PWA
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- Instalável pelo botão **Instalar app** (aparece quando o navegador permite).
+- Aviso quando há uma nova versão e quando o aparelho está sem conexão.
+- O service worker só roda no build de produção.
+- Respeita `prefers-reduced-motion` e o modo escuro do sistema.
 
-## Running unit tests
+## Rodando
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+npm install
+npm start              # http://localhost:4200  (API em http://localhost:8000/api)
+npm run build          # produção (usa src/environments/environment.ts)
+```
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+A URL da API fica em `src/environments/`. **Nunca coloque tokens ou senhas nesses arquivos.**
+Para testar a instalação e o modo offline, rode o build de produção e sirva `dist/lais-pwa/browser`
+com HTTPS ou `localhost`.

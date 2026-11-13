@@ -1,0 +1,38 @@
+<header class="head rise">
+  <h1 class="page-title">Histórico</h1>
+  <p class="page-sub">Quem alterou o quê e quando. Este registro não pode ser editado.</p>
+</header>
+
+@if (error()) {
+  <div class="card state">
+    <p>Não foi possível carregar o histórico.</p>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="load()"><app-icon name="refresh" /> Tentar de novo</button>
+  </div>
+} @else if (empty()) {
+  <div class="card state rise"><p>Nada registrado ainda. As alterações em campanhas aparecem aqui.</p></div>
+} @else {
+  <ol class="timeline">
+    @for (e of entries(); track e.id; let i = $index) {
+      <li class="entry rise" [style.--i]="i < 10 ? i : 0" [class]="'entry rise entry--' + e.action">
+        <span class="entry__dot"><app-icon [name]="e.action === 'create' ? 'plus' : e.action === 'delete' ? 'trash' : 'edit'" /></span>
+        <div class="card entry__body">
+          <p>
+            <strong>{{ e.user ?? 'Sistema' }}</strong> {{ sentence(e) }} <strong>{{ e.object_repr }}</strong>
+          </p>
+          <time>{{ e.created_at | date: "dd/MM/yyyy 'às' HH:mm" }}</time>
+          @if (diff(e).length) {
+            <ul class="diff">
+              @for (d of diff(e); track d.field) {
+                <li><code>{{ d.field }}</code> {{ d.from }} <span aria-hidden="true">→</span> <strong>{{ d.to }}</strong></li>
+              }
+            </ul>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+  @if (loading()) { <div class="skeleton more-sk"></div> }
+  @if (hasMore() && !loading()) {
+    <button type="button" class="btn btn--ghost more" (click)="load(true)">Carregar mais</button>
+  }
+}

@@ -1,37 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private router: Router) {}
+  loading = signal(false);
+  error = signal('');
 
-  login() {
-    if (this.username === 'lais' && this.password === '1234') {
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert('Usuário ou senha inválidos');
-    }
+  form = this.fb.nonNullable.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
+  submit(): void {
+    if (this.form.invalid || this.loading()) return;
+    this.loading.set(true);
+    this.error.set('');
+    const { username, password } = this.form.getRawValue();
+    this.auth.login(username.trim(), password).subscribe({
+      next: () => this.router.navigate(['/painel']),
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(
+          err.status === 429
+            ? 'Muitas tentativas. Aguarde um minuto e tente de novo.'
+            : err.status === 0
+              ? 'Não foi possível conectar ao servidor.'
+              : 'Usuário ou senha inválidos.',
+        );
+      },
+    });
   }
 }

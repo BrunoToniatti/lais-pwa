@@ -1,5 +1,5 @@
+// Produção. A API é configurada aqui; NUNCA coloque tokens ou senhas neste arquivo.
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000/api/',
-  token: 'b0e3fe7f69323442c13d0f9cdce357fbee67c655'
+  production: true,
+  apiUrl: 'https://api.laisbarretoribeiro.com/api',
 };

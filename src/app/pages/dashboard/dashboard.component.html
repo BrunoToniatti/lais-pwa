@@ -1,32 +1,88 @@
-<section class="atendimentos-hoje">
-  <h2 class="subtitulo">Atendimentos de Hoje</h2>
+<header class="head rise">
+  <div>
+    <h1 class="page-title">Painel</h1>
+    <p class="page-sub">Como suas campanhas estão performando no site.</p>
+  </div>
+  <div class="periods" role="tablist" aria-label="Período">
+    @for (p of periods; track p) {
+      <button type="button" role="tab" [class.is-on]="days() === p" [attr.aria-selected]="days() === p" (click)="setPeriod(p)">
+        {{ p }} dias
+      </button>
+    }
+  </div>
+</header>
 
-  @if(mensagemSucesso){
-  <p class="succes-menssage"> <mat-icon>check</mat-icon> {{ mensagemSucesso }}</p>
-  }
+@if (error()) {
+  <div class="card state rise">
+    <p>Não foi possível carregar os indicadores.</p>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="load()"><app-icon name="refresh" /> Tentar de novo</button>
+  </div>
+} @else {
+  <section class="kpis">
+    @for (k of kpis(); track k.label; let i = $index) {
+      <article class="card kpi rise" [style.--i]="i">
+        <span class="kpi__icon"><app-icon [name]="k.icon" /></span>
+        @if (loading() && !data()) {
+          <span class="skeleton kpi__sk"></span>
+        } @else {
+          <strong class="kpi__value" [appCountUp]="k.value" [decimals]="k.decimals" [suffix]="k.suffix">0</strong>
+        }
+        <span class="kpi__label">{{ k.label }}</span>
+      </article>
+    }
+  </section>
 
-  <ul class="lista-atendimentos">
-    <li class="atendimento" *ngFor="let ag of agendamentos">
-      <div class="horario">{{ ag.appointment_time }}</div>
-
-      <div class="cliente-info">
-        <mat-icon class="icone-servico">event</mat-icon>
-        <div>
-          <strong>{{ ag.client_name }}</strong>
-          <span>{{ ag.service_type }}</span>
-          <div class="price">
-            <span *ngIf="ag.discount">Desconto: {{ ag.discount_price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-            <span>Valor: {{ ag.total_price | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-          </div>
-          <span class="info" *ngIf="ag.coment"><mat-icon>info</mat-icon>{{ ag.coment }}</span>
+  <section class="grid">
+    <article class="card panel rise" style="--i: 4">
+      <h2>Exibições e cliques</h2>
+      @if (loading() && !data()) {
+        <div class="skeleton chart-sk"></div>
+      } @else if (chart())  {
+        <svg class="chart" [attr.viewBox]="'0 0 ' + W + ' ' + H" role="img" aria-label="Gráfico de exibições e cliques por dia">
+          <defs>
+            <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--gold)" stop-opacity="0.38" />
+              <stop offset="1" stop-color="var(--gold)" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path class="chart__area" [attr.d]="chart()!.area" fill="url(#fill)" />
+          <path class="chart__line" [attr.d]="chart()!.impressions" pathLength="1" />
+          <path class="chart__line chart__line--clicks" [attr.d]="chart()!.clicks" pathLength="1" />
+          @for (pt of chart()!.points; track $index) {
+            <circle class="chart__dot" [attr.cx]="pt.x" [attr.cy]="pt.y" r="3.5" />
+          }
+        </svg>
+        <div class="legend">
+          <span><i></i> Exibições</span>
+          <span><i class="clicks"></i> Cliques</span>
+          <span class="range">{{ chart()!.from }} a {{ chart()!.to }}</span>
         </div>
+      } @else {
+        <p class="empty">Ainda não há dados no período. Assim que um modal for exibido no site, ele aparece aqui.</p>
+      }
+    </article>
 
-      </div>
+    <article class="card panel rise" style="--i: 5">
+      <h2>Campanhas em destaque</h2>
+      @if (data()?.top_campaigns?.length) {
+        <ol class="top">
+          @for (t of data()!.top_campaigns; track t.id; let i = $index) {
+            <li>
+              <div class="top__row"><span>{{ t.name }}</span><strong>{{ t.ctr }}%</strong></div>
+              <div class="bar"><span [style.width.%]="t.ctr > 100 ? 100 : t.ctr" [style.--d]="i"></span></div>
+              <small>{{ t.impressions }} exibições · {{ t.clicks }} cliques</small>
+            </li>
+          }
+        </ol>
+      } @else {
+        <p class="empty">Nenhuma campanha com interações ainda.</p>
+      }
+    </article>
+  </section>
 
-      <div class="acoes">
-        <button class="botao finalizar" (click)="finalizarAgendamento(ag.id!)">Finalizar</button>
-        <button class="botao faltou" (click)="deleteAgendamento(ag.id!)">Cliente faltou</button>
-      </div>
-    </li>
-  </ul>
-</section>
+  @if (!loading() && !hasEvents()) {
+    <p class="hint rise" style="--i: 6">
+      Dica: crie uma campanha com modal em <strong>Campanhas</strong> e ative para começar a medir.
+    </p>
+  }
+}

@@ -1,0 +1,70 @@
+<header class="head rise">
+  <div>
+    <h1 class="page-title">Campanhas</h1>
+    <p class="page-sub">Crie e controle o que aparece para os visitantes do site.</p>
+  </div>
+  <a class="btn btn--gold" routerLink="/campanhas/nova"><app-icon name="plus" /> Nova campanha</a>
+</header>
+
+<div class="filters rise" style="--i: 1" role="tablist">
+  @for (f of filters; track f.value) {
+    <button type="button" role="tab" [class.is-on]="filter() === f.value" [attr.aria-selected]="filter() === f.value" (click)="setFilter(f.value)">
+      {{ f.label }}
+    </button>
+  }
+</div>
+
+@if (loading()) {
+  <div class="list">
+    @for (n of [1, 2, 3]; track n) {
+      <div class="skeleton row-sk"></div>
+    }
+  </div>
+} @else if (error()) {
+  <div class="card state">
+    <p>Não foi possível carregar as campanhas.</p>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="load()"><app-icon name="refresh" /> Tentar de novo</button>
+  </div>
+} @else if (empty()) {
+  <div class="card state rise">
+    <h2>Nenhuma campanha por aqui</h2>
+    <p>Comece criando uma campanha de primeira visita com 10% de desconto, por exemplo.</p>
+    <a class="btn btn--gold" routerLink="/campanhas/nova"><app-icon name="plus" /> Criar primeira campanha</a>
+  </div>
+} @else {
+  <ul class="list">
+    @for (c of items(); track c.id; let i = $index) {
+      <li class="card item rise" [style.--i]="i + 2">
+        <div class="item__main">
+          <div class="item__title">
+            <h2>{{ c.name }}</h2>
+            <span class="chip" [class]="'chip chip--' + c.status">{{ statusLabel[c.status] }}</span>
+          </div>
+          <p class="item__meta">
+            {{ audienceLabel[c.audience] }}
+            @if (c.starts_at || c.ends_at) {
+              · {{ c.starts_at ? (c.starts_at | date: 'dd/MM/yy') : 'sem início' }} a
+              {{ c.ends_at ? (c.ends_at | date: 'dd/MM/yy') : 'sem fim' }}
+            }
+          </p>
+          @if (c.modal) {
+            <p class="item__modal">Modal: <strong>{{ c.modal.title }}</strong></p>
+          } @else {
+            <p class="item__modal item__modal--none">Sem modal configurado</p>
+          }
+        </div>
+
+        <div class="item__actions">
+          <button type="button" class="btn btn--ghost btn--sm" [disabled]="busy() === c.id || !c.modal" (click)="toggle(c)">
+            <app-icon [name]="c.status === 'active' ? 'pause' : 'play'" />
+            {{ c.status === 'active' ? 'Pausar' : 'Ativar' }}
+          </button>
+          <a class="btn btn--ghost btn--sm" [routerLink]="['/campanhas', c.id]"><app-icon name="edit" /> Editar</a>
+          <button type="button" class="btn btn--danger btn--sm" (click)="remove(c)">
+            <app-icon name="trash" /> {{ confirming() === c.id ? 'Confirmar?' : 'Excluir' }}
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,21 @@
+.head { margin-bottom: 1.4rem; }
+.state { padding: 1.4rem; display: grid; gap: 0.8rem; justify-items: start; color: var(--muted); }
+
+.timeline { position: relative; display: grid; gap: 0.8rem; list-style: none; padding-left: 0.2rem;
+  &::before { content: ''; position: absolute; left: 21px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+}
+
+.entry {
+  position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 0.6rem; align-items: start;
+  &__dot { z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; color: var(--gold-dark); background: var(--surface); border: 2px solid var(--line); border-radius: 50%; }
+  &--create &__dot { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+  &--delete &__dot { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); }
+  &__body { padding: 0.8rem 1rem; time { font-size: 0.78rem; color: var(--muted); } }
+}
+
+.diff { display: grid; gap: 0.25rem; margin-top: 0.5rem; padding-top: 0.5rem; list-style: none; border-top: 1px solid var(--line); font-size: 0.84rem;
+  code { padding: 0.05rem 0.45rem; font-size: 0.78rem; background: var(--surface-2); border-radius: 6px; }
+}
+
+.more { margin: 1rem auto 0; display: flex; }
+.more-sk { height: 64px; margin-top: 0.8rem; }

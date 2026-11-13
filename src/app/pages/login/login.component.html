@@ -1,20 +1,30 @@
-<div class="login-container">
-  <mat-card class="login-card animate">
-    <div class="logo">
-      <h1>Lais Ribeiro</h1>
-      <p>Painel Administrativo</p>
+<div class="login">
+  <span class="orb orb--1"></span>
+  <span class="orb orb--2"></span>
+
+  <form class="card login__card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="login__brand">
+      <span class="login__mark">L</span>
+      <h1>Lais Platform</h1>
+      <p>Gestão, governança e CRO</p>
     </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Usuário</mat-label>
-      <input matInput [(ngModel)]="username" />
-    </mat-form-field>
+    <label class="field">
+      <span>Usuário</span>
+      <input formControlName="username" autocomplete="username" autocapitalize="none" />
+    </label>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Senha</mat-label>
-      <input matInput [(ngModel)]="password" type="password" />
-    </mat-form-field>
+    <label class="field">
+      <span>Senha</span>
+      <input formControlName="password" type="password" autocomplete="current-password" />
+    </label>
 
-    <button mat-raised-button color="primary" (click)="login()">Entrar</button>
-  </mat-card>
+    @if (error()) {
+      <p class="login__error" role="alert">{{ error() }}</p>
+    }
+
+    <button class="btn btn--gold" type="submit" [disabled]="form.invalid || loading()">
+      {{ loading() ? 'Entrando...' : 'Entrar' }}
+    </button>
+  </form>
 </div>

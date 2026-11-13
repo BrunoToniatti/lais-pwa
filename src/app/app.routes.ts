@@ -1,25 +1,39 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { LayoutComponent } from './layout/layout.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { AgendamentosComponent } from './pages/agendamentos/agendamentos.component';
-import { ClientesComponent } from './pages/clientes/clientes.component';
-import { PerfilComponent } from './pages/perfil/perfil.component';
-import { ServicesComponent } from './pages/services/services.component';
-import { FinanceiroComponent } from './pages/financeiro/financeiro.component';
+import { authGuard, guestGuard } from './core/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent },
+  {
+    path: 'login',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
+  },
   {
     path: '',
-    component: LayoutComponent,
+    canActivate: [authGuard],
+    loadComponent: () => import('./layout/shell.component').then((m) => m.ShellComponent),
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'agendamentos', component: AgendamentosComponent },
-      { path: 'clientes', component: ClientesComponent },
-      { path: 'financeiro', component: FinanceiroComponent},
-      // { path: 'perfil', component: PerfilComponent },
-      { path: 'services', component: ServicesComponent },
-    ]
-  }
+      { path: '', pathMatch: 'full', redirectTo: 'painel' },
+      {
+        path: 'painel',
+        loadComponent: () => import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      {
+        path: 'campanhas',
+        loadComponent: () => import('./pages/campaigns/campaign-list.component').then((m) => m.CampaignListComponent),
+      },
+      {
+        path: 'campanhas/nova',
+        loadComponent: () => import('./pages/campaigns/campaign-form.component').then((m) => m.CampaignFormComponent),
+      },
+      {
+        path: 'campanhas/:id',
+        loadComponent: () => import('./pages/campaigns/campaign-form.component').then((m) => m.CampaignFormComponent),
+      },
+      {
+        path: 'historico',
+        loadComponent: () => import('./pages/audit/audit.component').then((m) => m.AuditComponent),
+      },
+    ],
+  },
+  { path: '**', redirectTo: '' },
 ];
