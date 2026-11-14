@@ -77,3 +77,42 @@ export const FREQUENCY_LABEL: Record<Frequency, string> = {
   day: 'Uma vez por dia',
   once: 'Uma única vez',
 };
+
+export type ServiceCategory = 'lash' | 'care' | 'package' | 'brow' | 'other';
+
+export interface Service {
+  id: number;
+  slug: string;
+  name: string;
+  category: ServiceCategory;
+  category_label: string;
+  description: string;
+  price: string;
+  price_prefix: string;
+  image_url: string;
+  position: number;
+  is_active: boolean;
+  highlight: boolean;
+  hero_label: string;
+}
+
+export interface UploadSignature {
+  enabled: boolean;
+  cloud_name?: string;
+  api_key?: string;
+  timestamp?: number;
+  folder?: string;
+  signature?: string;
+  upload_url?: string;
+}
+
+/** Ordem em que as categorias aparecem no painel e no site. */
+export const CATEGORY_ORDER: ServiceCategory[] = ['lash', 'care', 'package', 'brow', 'other'];
+
+export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
+  lash: 'Extensão de cílios',
+  care: 'Cuidados',
+  package: 'Pacote',
+  brow: 'Sobrancelha',
+  other: 'Outros',
+};

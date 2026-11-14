@@ -1,0 +1,78 @@
+<header class="head rise">
+  <div>
+    <h1 class="page-title">Serviços e preços</h1>
+    <p class="page-sub">Tudo o que você alterar aparece no site em até 1 minuto.</p>
+  </div>
+  <a class="btn btn--gold" routerLink="/servicos/novo"><app-icon name="plus" /> Novo serviço</a>
+</header>
+
+@if (loading()) {
+  <div class="stack">
+    @for (n of [1, 2, 3, 4]; track n) { <div class="skeleton row-sk"></div> }
+  </div>
+} @else if (error()) {
+  <div class="card state">
+    <p>Não foi possível carregar os serviços.</p>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="load()"><app-icon name="refresh" /> Tentar de novo</button>
+  </div>
+} @else if (!items().length) {
+  <div class="card state rise">
+    <h2>Nenhum serviço cadastrado</h2>
+    <p>Cadastre o primeiro serviço. Ele aparece no site assim que estiver visível.</p>
+    <a class="btn btn--gold" routerLink="/servicos/novo"><app-icon name="plus" /> Criar serviço</a>
+  </div>
+} @else {
+  @for (g of groups(); track g.category; let gi = $index) {
+    <section class="group rise" [style.--i]="gi + 1">
+      <h2>{{ g.label }}</h2>
+      <ul class="card list">
+        @for (s of g.services; track s.id; let i = $index) {
+          <li class="row" [class.row--off]="!s.is_active">
+            <div class="thumb">
+              @if (s.image_url) { <img [src]="s.image_url" alt="" loading="lazy" /> } @else { <app-icon name="image" /> }
+            </div>
+
+            <div class="info">
+              <strong>{{ s.name }}</strong>
+              <span class="meta">
+                @if (!s.is_active) { <span class="chip">Escondido</span> }
+                @if (s.highlight) { <span class="chip chip--active">Destaque no topo</span> }
+              </span>
+            </div>
+
+            <div class="price">
+              @if (editingId() === s.id) {
+                <form (submit)="$event.preventDefault(); savePrice(s)">
+                  <span class="rs">R$</span>
+                  <input
+                    #input
+                    [value]="draft()"
+                    (input)="draft.set($any($event.target).value)"
+                    (keydown.escape)="cancelPrice()"
+                    inputmode="decimal"
+                    aria-label="Novo preço"
+                    autofocus
+                  />
+                  <button type="submit" class="btn btn--gold btn--sm">Salvar</button>
+                  <button type="button" class="btn btn--ghost btn--sm" (click)="cancelPrice()">Cancelar</button>
+                </form>
+              } @else {
+                <button type="button" class="price__btn" (click)="editPrice(s)" [attr.aria-label]="'Alterar preço de ' + s.name">
+                  {{ money(s.price) }}<app-icon name="edit" />
+                </button>
+              }
+            </div>
+
+            <div class="actions">
+              <button type="button" class="icon" (click)="move(g.category, s, -1)" [disabled]="i === 0" aria-label="Subir"><app-icon name="up" /></button>
+              <button type="button" class="icon" (click)="move(g.category, s, 1)" [disabled]="i === g.services.length - 1" aria-label="Descer"><app-icon name="down" /></button>
+              <button type="button" class="btn btn--ghost btn--sm" (click)="toggleActive(s)">{{ s.is_active ? 'Esconder' : 'Mostrar' }}</button>
+              <a class="btn btn--ghost btn--sm" [routerLink]="['/servicos', s.id]"><app-icon name="edit" /> Editar</a>
+              <button type="button" class="btn btn--danger btn--sm" (click)="remove(s)">{{ confirming() === s.id ? 'Confirmar?' : 'Excluir' }}</button>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}

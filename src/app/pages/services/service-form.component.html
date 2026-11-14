@@ -1,0 +1,111 @@
+<header class="head rise">
+  <a class="back" routerLink="/servicos"><app-icon name="back" /> Serviços</a>
+  <h1 class="page-title">{{ isEdit() ? 'Editar serviço' : 'Novo serviço' }}</h1>
+</header>
+
+@if (loading()) {
+  <div class="skeleton sk"></div>
+} @else {
+  <div class="layout">
+    <form class="card form rise" style="--i: 1" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <label class="field" [class.field--error]="invalid('name')">
+        <span>Nome</span>
+        <input formControlName="name" placeholder="Ex.: Volume Brasileiro" />
+        @if (invalid('name')) { <small>Informe o nome do serviço.</small> }
+      </label>
+
+      <div class="two">
+        <label class="field">
+          <span>Categoria</span>
+          <select formControlName="category">
+            @for (c of categories; track c.value) { <option [value]="c.value">{{ c.label }}</option> }
+          </select>
+        </label>
+        <label class="field" [class.field--error]="priceInvalid()">
+          <span>Preço (R$)</span>
+          <input formControlName="price" inputmode="decimal" placeholder="135,00" />
+          @if (priceInvalid()) { <small>Digite um valor como 135 ou 135,50.</small> }
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Texto antes do preço (opcional)</span>
+        <input formControlName="price_prefix" placeholder="Ex.: a partir de" />
+      </label>
+
+      <label class="field">
+        <span>Descrição</span>
+        <textarea formControlName="description" rows="3" placeholder="Aparece no card do site"></textarea>
+      </label>
+
+      <div class="photo">
+        <span class="photo__label">Foto</span>
+        <div class="photo__box">
+          @if (form.controls.image_url.value) {
+            <img [src]="form.controls.image_url.value" alt="Foto do serviço" />
+          } @else {
+            <span class="photo__empty"><app-icon name="image" /> Sem foto</span>
+          }
+          @if (uploading()) {
+            <div class="photo__bar" role="progressbar" [attr.aria-valuenow]="progress()"><span [style.width.%]="progress()"></span></div>
+          }
+        </div>
+
+        <div class="photo__actions">
+          @if (uploadEnabled()) {
+            <label class="btn btn--ghost btn--sm file" [class.is-busy]="uploading()">
+              <app-icon name="image" /> {{ uploading() ? 'Enviando ' + progress() + '%' : 'Enviar foto' }}
+              <input type="file" [accept]="accept" (change)="onFile($event)" [disabled]="uploading()" hidden />
+            </label>
+          }
+          @if (form.controls.image_url.value) {
+            <button type="button" class="btn btn--ghost btn--sm" (click)="removeImage()">Remover foto</button>
+          }
+        </div>
+
+        <label class="field" [class.field--error]="invalid('image_url')">
+          <span>{{ uploadEnabled() ? 'ou cole o link de uma imagem' : 'Link da imagem' }}</span>
+          <input formControlName="image_url" inputmode="url" placeholder="https://..." />
+          @if (invalid('image_url')) { <small>Use um link começando com http:// ou https://.</small> }
+        </label>
+        @if (!uploadEnabled()) {
+          <p class="note">O envio direto de fotos ainda não está ativado no servidor. Por enquanto, use o link de uma imagem.</p>
+        }
+      </div>
+
+      <div class="switches">
+        <label class="switch"><input type="checkbox" formControlName="is_active" /> <span>Visível no site</span></label>
+        <label class="switch"><input type="checkbox" formControlName="highlight" /> <span>Destacar no topo do site</span></label>
+      </div>
+      @if (form.controls.highlight.value) {
+        <label class="field">
+          <span>Rótulo no topo</span>
+          <input formControlName="hero_label" placeholder="Ex.: Extensão de cílios" />
+        </label>
+      }
+
+      <div class="actions">
+        <a class="btn btn--ghost" routerLink="/servicos">Cancelar</a>
+        <button class="btn btn--gold" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+      </div>
+    </form>
+
+    <aside class="preview rise" style="--i: 2" aria-label="Como aparece no site">
+      <strong class="preview__title">Como aparece no site</strong>
+      <article class="site-card">
+        <div class="site-card__media">
+          @if (preview().image_url) { <img [src]="preview().image_url" alt="" /> } @else { <span><app-icon name="image" /></span> }
+          <span class="site-card__price">
+            @if (preview().price_prefix) { <small>{{ preview().price_prefix }}</small> }
+            {{ preview().priceText }}
+          </span>
+        </div>
+        <div class="site-card__body">
+          <h3>{{ preview().name || 'Nome do serviço' }}</h3>
+          @if (preview().description) { <p>{{ preview().description }}</p> }
+        </div>
+      </article>
+      @if (!preview().is_active) { <p class="note">Este serviço está escondido e não aparece no site.</p> }
+    </aside>
+  </div>
+}

@@ -1,0 +1,44 @@
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.stack { display: grid; gap: 0.8rem; }
+.row-sk { height: 76px; }
+.state { display: grid; gap: 0.8rem; justify-items: start; padding: 1.6rem; h2 { font-size: 1.25rem; } p { color: var(--muted); } }
+
+.group { margin-bottom: 1.6rem; h2 { margin-bottom: 0.6rem; font-size: 1.15rem; } }
+.list { list-style: none; overflow: hidden; }
+
+.row {
+  display: grid; grid-template-columns: 56px 1fr auto; gap: 0.5rem 0.9rem; align-items: center; padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--line); transition: background 0.25s, opacity 0.25s;
+  &:last-child { border-bottom: 0; }
+  &:hover { background: var(--surface-2); }
+  &--off { opacity: 0.6; }
+}
+
+.thumb {
+  display: grid; place-items: center; width: 56px; height: 56px; overflow: hidden; color: var(--muted); background: var(--surface-2); border-radius: 14px;
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.info { display: grid; gap: 0.2rem; min-width: 0; strong { overflow-wrap: anywhere; } .meta { display: flex; flex-wrap: wrap; gap: 0.3rem; } }
+
+.price {
+  justify-self: end;
+  &__btn {
+    display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0 0.9rem;
+    font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--gold-dark);
+    background: transparent; border: 1px dashed var(--line); border-radius: 12px; transition: border-color 0.25s, background 0.25s;
+    &:hover { border-color: var(--gold); background: var(--surface); }
+    app-icon { font-size: 0.9rem; opacity: 0.6; }
+  }
+  form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+  .rs { color: var(--muted); }
+  input { width: 100px; min-height: 44px; padding: 0 0.7rem; background: var(--surface); border: 1.5px solid var(--gold); border-radius: 12px; font-size: 1.05rem; &:focus { outline: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 22%, transparent); } }
+}
+
+.actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; justify-content: flex-end; }
+.icon { display: grid; place-items: center; width: 38px; height: 38px; background: transparent; border: 1px solid var(--line); border-radius: 50%; &:disabled { opacity: 0.35; cursor: default; } &:not(:disabled):hover { border-color: var(--gold); } }
+
+@media (min-width: 900px) {
+  .row { grid-template-columns: 56px 1fr auto auto; }
+  .actions { grid-column: auto; }
+}

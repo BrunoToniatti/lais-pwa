@@ -30,6 +30,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/campaigns/campaign-form.component').then((m) => m.CampaignFormComponent),
       },
       {
+        path: 'servicos',
+        loadComponent: () => import('./pages/services/service-list.component').then((m) => m.ServiceListComponent),
+      },
+      {
+        path: 'servicos/novo',
+        loadComponent: () => import('./pages/services/service-form.component').then((m) => m.ServiceFormComponent),
+      },
+      {
+        path: 'servicos/:id',
+        loadComponent: () => import('./pages/services/service-form.component').then((m) => m.ServiceFormComponent),
+      },
+      {
         path: 'historico',
         loadComponent: () => import('./pages/audit/audit.component').then((m) => m.AuditComponent),
       },

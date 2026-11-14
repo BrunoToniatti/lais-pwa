@@ -39,6 +39,7 @@ export class ShellComponent {
   readonly nav = [
     { path: '/painel', label: 'Painel', icon: 'dashboard' },
     { path: '/campanhas', label: 'Campanhas', icon: 'campaigns' },
+    { path: '/servicos', label: 'Serviços', icon: 'tag' },
     { path: '/historico', label: 'Histórico', icon: 'audit' },
   ];
 

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuditEntry, Campaign, DashboardSummary, Page } from './models';
+import { AuditEntry, Campaign, DashboardSummary, Page, Service, UploadSignature } from './models';
 
 type CampaignPayload = Omit<Campaign, 'id' | 'created_at' | 'updated_at'>;
 
@@ -46,5 +46,34 @@ export class ApiService {
 
   audit(page = 1): Observable<Page<AuditEntry>> {
     return this.http.get<Page<AuditEntry>>(`${this.base}/audit/`, { params: { page } });
+  }
+
+  // ---- Serviços e preços ----
+  services(): Observable<Service[]> {
+    return this.http.get<Service[]>(`${this.base}/services/`);
+  }
+
+  service(id: number): Observable<Service> {
+    return this.http.get<Service>(`${this.base}/services/${id}/`);
+  }
+
+  createService(data: Partial<Service>): Observable<Service> {
+    return this.http.post<Service>(`${this.base}/services/`, data);
+  }
+
+  updateService(id: number, data: Partial<Service>): Observable<Service> {
+    return this.http.patch<Service>(`${this.base}/services/${id}/`, data);
+  }
+
+  deleteService(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/services/${id}/`);
+  }
+
+  reorderServices(ids: number[]): Observable<void> {
+    return this.http.post<void>(`${this.base}/services/reorder/`, { ids });
+  }
+
+  uploadSignature(): Observable<UploadSignature> {
+    return this.http.get<UploadSignature>(`${this.base}/media/signature/`);
   }
 }
