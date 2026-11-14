@@ -37,3 +37,9 @@ npm run build          # produção (usa src/environments/environment.ts)
 A URL da API fica em `src/environments/`. **Nunca coloque tokens ou senhas nesses arquivos.**
 Para testar a instalação e o modo offline, rode o build de produção e sirva `dist/lais-pwa/browser`
 com HTTPS ou `localhost`.
+
+## Publicar na Netlify
+
+O `netlify.toml` já traz tudo: comando de build, pasta publicada (`dist/lais-pwa/browser`), Node 20 e o
+redirecionamento de todas as rotas para o `index.html` (sem ele, recarregar `/login` dá 404).
+Basta conectar o repositório. A URL da API de produção fica em `src/environments/environment.ts`.
