@@ -1,6 +1,22 @@
 export type CampaignStatus = 'draft' | 'active' | 'paused' | 'ended';
 export type Audience = 'all' | 'new' | 'returning';
 export type Frequency = 'always' | 'session' | 'day' | 'once';
+export type CampaignKind = 'modal' | 'ticker';
+export type TickerSpeed = 'slow' | 'normal' | 'fast';
+export type TickerTheme = 'gold' | 'dark';
+
+export interface TickerMessage {
+  text: string;
+  url: string;
+}
+
+export interface Ticker {
+  id?: number;
+  messages: TickerMessage[];
+  speed: TickerSpeed;
+  theme: TickerTheme;
+  pages: string[];
+}
 
 export interface Modal {
   id?: number;
@@ -16,6 +32,7 @@ export interface Modal {
 
 export interface Campaign {
   id: number;
+  kind: CampaignKind;
   name: string;
   description: string;
   status: CampaignStatus;
@@ -24,6 +41,7 @@ export interface Campaign {
   ends_at: string | null;
   priority: number;
   modal: Modal | null;
+  ticker: Ticker | null;
   created_at: string;
   updated_at: string;
 }
@@ -70,6 +88,8 @@ export const AUDIENCE_LABEL: Record<Audience, string> = {
   new: 'Primeira visita',
   returning: 'Visitantes recorrentes',
 };
+
+export const KIND_LABEL: Record<CampaignKind, string> = { modal: 'Modal', ticker: 'Letreiro' };
 
 export const FREQUENCY_LABEL: Record<Frequency, string> = {
   always: 'Sempre',

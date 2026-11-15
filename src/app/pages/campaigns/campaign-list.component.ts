@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
-import { AUDIENCE_LABEL, Campaign, CampaignStatus, STATUS_LABEL } from '../../core/models';
+import { AUDIENCE_LABEL, Campaign, CampaignStatus, KIND_LABEL, STATUS_LABEL } from '../../core/models';
 import { ToastService } from '../../core/toast.service';
 import { IconComponent } from '../../shared/icon.component';
 
@@ -18,6 +18,7 @@ export class CampaignListComponent {
   private toast = inject(ToastService);
 
   readonly statusLabel = STATUS_LABEL;
+  readonly kindLabel = KIND_LABEL;
   readonly audienceLabel = AUDIENCE_LABEL;
   readonly filters: { value: '' | CampaignStatus; label: string }[] = [
     { value: '', label: 'Todas' },

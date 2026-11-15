@@ -8,6 +8,21 @@
 } @else {
   <div class="layout">
     <form class="card form rise" style="--i: 1" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      @if (!isEdit()) {
+        <fieldset>
+          <legend>Tipo de campanha</legend>
+          <div class="kinds" role="radiogroup">
+            @for (k of kinds; track k.value) {
+              <label class="kind" [class.is-on]="isTicker() === (k.value === 'ticker')">
+                <input type="radio" formControlName="kind" [value]="k.value" />
+                <strong>{{ k.label }}</strong>
+                <span>{{ k.hint }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+      }
+
       <fieldset>
         <legend>Campanha</legend>
         <label class="field" [class.field--error]="invalid('name')">
@@ -43,6 +58,55 @@
         </label>
       </fieldset>
 
+      @if (isTicker()) {
+        <fieldset formGroupName="ticker">
+          <legend>Letreiro no site</legend>
+          <p class="hint">Frases curtas que passam no topo do site. Quem passa o mouse ou encosta o dedo pausa o letreiro.</p>
+
+          <div class="messages" formArrayName="messages">
+            @for (m of messages.controls; track m; let i = $index) {
+              <div class="message" [formGroupName]="i">
+                <label class="field" [class.field--error]="messageInvalid(i, 'text')">
+                  <span>Frase {{ i + 1 }}</span>
+                  <input formControlName="text" maxlength="80" placeholder="Ex.: Agenda aberta para dezembro" />
+                  @if (messageInvalid(i, 'text')) { <small>Escreva a frase (até 80 caracteres).</small> }
+                </label>
+                <label class="field" [class.field--error]="messageInvalid(i, 'url')">
+                  <span>Link (opcional)</span>
+                  <input formControlName="url" inputmode="url" placeholder="https://wa.me/..." />
+                  @if (messageInvalid(i, 'url')) { <small>Use um link http:// ou https://.</small> }
+                </label>
+                <button type="button" class="btn btn--danger btn--sm message__remove" (click)="removeMessage(i)" [disabled]="messages.length === 1" [attr.aria-label]="'Remover frase ' + (i + 1)">
+                  <app-icon name="trash" /> Remover
+                </button>
+              </div>
+            }
+          </div>
+          <button type="button" class="btn btn--ghost btn--sm add" (click)="addMessage()" [disabled]="!canAddMessage()">
+            <app-icon name="plus" /> Adicionar frase ({{ messages.length }}/6)
+          </button>
+
+          <div class="two">
+            <label class="field">
+              <span>Velocidade</span>
+              <select formControlName="speed">
+                @for (sp of speeds; track sp.value) { <option [value]="sp.value">{{ sp.label }}</option> }
+              </select>
+            </label>
+            <label class="field">
+              <span>Cor</span>
+              <select formControlName="theme">
+                @for (t of themes; track t.value) { <option [value]="t.value">{{ t.label }}</option> }
+              </select>
+            </label>
+          </div>
+          <label class="field" [class.field--error]="invalid('ticker.pages')">
+            <span>Páginas (uma por linha, comece com /)</span>
+            <textarea formControlName="pages" rows="2"></textarea>
+            @if (invalid('ticker.pages')) { <small>Cada página deve começar com "/".</small> }
+          </label>
+        </fieldset>
+      } @else {
       <fieldset formGroupName="modal">
         <legend>Modal no site</legend>
         <label class="field" [class.field--error]="invalid('modal.title')">
@@ -88,6 +152,7 @@
           @if (invalid('modal.pages')) { <small>Cada página deve começar com "/".</small> }
         </label>
       </fieldset>
+      }
 
       <div class="actions">
         <a class="btn btn--ghost" routerLink="/campanhas">Cancelar</a>
@@ -95,23 +160,49 @@
       </div>
     </form>
 
-    <aside class="preview rise" style="--i: 2" aria-label="Pré-visualização do modal">
-      <div class="preview__bar">
-        <strong>Pré-visualização</strong>
-        <div class="seg">
-          <button type="button" [class.is-on]="device() === 'mobile'" (click)="device.set('mobile')">Celular</button>
-          <button type="button" [class.is-on]="device() === 'desktop'" (click)="device.set('desktop')">Computador</button>
+    <aside class="preview rise" style="--i: 2" aria-label="Pré-visualização">
+      @if (isTicker()) {
+        <div class="preview__bar"><strong>Pré-visualização</strong></div>
+        <div class="stage stage--ticker">
+          <div class="site-top">
+            <div class="ticker" [class.ticker--dark]="tickerPreview().theme === 'dark'" [style.--dur]="tickerPreview().seconds + 's'">
+              @if (tickerPreview().texts.length) {
+                <div class="ticker__track">
+                  @for (copy of [0, 1]; track copy) {
+                    <div class="ticker__group" [attr.aria-hidden]="copy === 1 ? 'true' : null">
+                      @for (t of tickerPreview().texts; track $index) {
+                        <span class="ticker__item">{{ t }}</span>
+                        <span class="ticker__dot" aria-hidden="true">✦</span>
+                      }
+                    </div>
+                  }
+                </div>
+              } @else {
+                <span class="ticker__empty">Escreva uma frase para ver o letreiro</span>
+              }
+            </div>
+            <div class="site-top__menu"><span class="site-top__brand">Lais Ribeiro</span><span class="site-top__links"></span></div>
+          </div>
         </div>
-      </div>
-      <div class="stage" [class.stage--desktop]="device() === 'desktop'">
-        <div class="modal">
-          @if (preview().image_url) { <img class="modal__img" [src]="preview().image_url" alt="" /> }
-          <h3>{{ preview().title || 'Título do modal' }}</h3>
-          @if (preview().body) { <p>{{ preview().body }}</p> }
-          <span class="modal__cta">{{ preview().cta_label || 'Botão' }}</span>
-          <small>Fechar</small>
+        <p class="hint">Passe o mouse sobre o letreiro para pausar, como o visitante fará no site.</p>
+      } @else {
+        <div class="preview__bar">
+          <strong>Pré-visualização</strong>
+          <div class="seg">
+            <button type="button" [class.is-on]="device() === 'mobile'" (click)="device.set('mobile')">Celular</button>
+            <button type="button" [class.is-on]="device() === 'desktop'" (click)="device.set('desktop')">Computador</button>
+          </div>
         </div>
-      </div>
+        <div class="stage" [class.stage--desktop]="device() === 'desktop'">
+          <div class="modal">
+            @if (preview().image_url) { <img class="modal__img" [src]="preview().image_url" alt="" /> }
+            <h3>{{ preview().title || 'Título do modal' }}</h3>
+            @if (preview().body) { <p>{{ preview().body }}</p> }
+            <span class="modal__cta">{{ preview().cta_label || 'Botão' }}</span>
+            <small>Fechar</small>
+          </div>
+        </div>
+      }
     </aside>
   </div>
 }

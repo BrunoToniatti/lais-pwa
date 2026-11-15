@@ -39,6 +39,7 @@
           <div class="item__title">
             <h2>{{ c.name }}</h2>
             <span class="chip" [class]="'chip chip--' + c.status">{{ statusLabel[c.status] }}</span>
+            <span class="chip">{{ kindLabel[c.kind] }}</span>
           </div>
           <p class="item__meta">
             {{ audienceLabel[c.audience] }}
@@ -47,7 +48,13 @@
               {{ c.ends_at ? (c.ends_at | date: 'dd/MM/yy') : 'sem fim' }}
             }
           </p>
-          @if (c.modal) {
+          @if (c.kind === 'ticker') {
+            @if (c.ticker) {
+              <p class="item__modal">Letreiro: <strong>{{ c.ticker.messages[0].text }}</strong>@if (c.ticker.messages.length > 1) { (+{{ c.ticker.messages.length - 1 }}) }</p>
+            } @else {
+              <p class="item__modal item__modal--none">Sem frases configuradas</p>
+            }
+          } @else if (c.modal) {
             <p class="item__modal">Modal: <strong>{{ c.modal.title }}</strong></p>
           } @else {
             <p class="item__modal item__modal--none">Sem modal configurado</p>
@@ -55,7 +62,7 @@
         </div>
 
         <div class="item__actions">
-          <button type="button" class="btn btn--ghost btn--sm" [disabled]="busy() === c.id || !c.modal" (click)="toggle(c)">
+          <button type="button" class="btn btn--ghost btn--sm" [disabled]="busy() === c.id || !(c.modal || c.ticker)" (click)="toggle(c)">
             <app-icon [name]="c.status === 'active' ? 'pause' : 'play'" />
             {{ c.status === 'active' ? 'Pausar' : 'Ativar' }}
           </button>
